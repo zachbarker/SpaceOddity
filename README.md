@@ -2,21 +2,23 @@
 *ground control to major tom*
 
 ### How do I contribute? ###
+1. 
 git checkout front_end 
 
 OR
 
 git checkout back_end
 
-create your own branches from under these (i.e. norman branch under front_end)
+2. create your own branches from under these (i.e. norman branch under front_end)
+ - work in your own branch.
+ - make small commits
 
-work in your own branch.
+3. when done, merge to front_end/back_end via a pull request or do the merge yourself (preferably)
 
-merge to front_end/back_end via a pull request or do the merge yourself (preferably)
+4. eventually, merge from front_end/back_end to development branch when linking disparate components
+ - i.e. sending data from the front_end to the back_end etc
 
-make small commits to your own branch
-
-above all have fun
+5. above all have fun
 
 godspeed.
 
