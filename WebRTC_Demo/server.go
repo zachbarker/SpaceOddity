@@ -82,6 +82,7 @@ func main() {
 	dcConfig.Ordered = &ordered
 	dcConfig.MaxRetransmits = &transmits
 
+	// https://github.com/pion/webrtc/blob/master/datachannel.go
 	dataChannel, err := peerConnection.CreateDataChannel("game-server", &dcConfig)
 	if err != nil {
 		panic(err)
@@ -94,7 +95,7 @@ func main() {
 
 	// Register channel opening handling
 	dataChannel.OnOpen(func() {
-		fmt.Printf("Data channel '%s'-'%d' open. Random messages will now be sent to any connected DataChannels every 5 seconds\n", dataChannel.Label(), dataChannel.ID())
+		fmt.Printf("Data channel '%s'-'%d' open.\n", dataChannel.Label(), dataChannel.ID())
 
 		for range time.NewTicker(5 * time.Second).C {
 			message := "message"
