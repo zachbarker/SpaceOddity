@@ -12,3 +12,5 @@ import (
 	"strings"
 	"time"
 )
+
+fmt.Printf("test")
