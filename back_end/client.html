@@ -1,0 +1,31 @@
+<html>
+
+
+
+<body>
+    <script>
+        let playerSocket = new WebSocket('ws://localhost:8080/websocket');
+
+        playerSocket.onopen = (event) => {
+            playerSocket.onmessage = (msg) => {
+                console.log("offer: ", msg['data']);
+                console.log("about to send our answer");
+                playerSocket.send("loud and clear - client");
+            }
+
+            playerSocket.onclose = (event) => {
+                console.log("CLOSED SOCKET NOW!! WAAA kinda cringe lmao.");
+            }
+        }
+    
+    </script>
+
+    <div id="socketState">
+
+    </div>
+</body>
+
+
+
+
+</html>
