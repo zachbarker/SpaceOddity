@@ -6,6 +6,7 @@ import (
 	"github.com/pion/webrtc"
 	"log"
 	"net/http"
+	"sessionserializer"
 )
 
 var upgrader = websocket.Upgrader{}
@@ -23,7 +24,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	config := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
-				URLs: []string{"stun:stun.l.google.com:19302"}	
+				URLs: []string{"stun:stun.l.google.com:19302"},
 			},
 		},
 	}
@@ -62,7 +63,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 				log.Println(sendErr)
 				return
 			}
-		}	
+		}
 	})
 
 	offer, err := peerConnection.CreateOffer(nil)
@@ -81,7 +82,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	<-gatherComplete
 
-	encodedOffer = Encode(*peerConnection.LocalDescription())
+	encodedOffer := Encode(*peerConnection.LocalDescription())
 	err = playerSocket.WriteMessage(websocket.TextMessage, encodedOffer)
 	if err != nil {
 		log.Print("ERROR", err)
@@ -104,7 +105,9 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	// need to create a webrtc data channel here.
 
-	err = playerSocket.WriteMessage(websocket.TextMessage, []byte("DC MADE")
+	err = playerSocket.WriteMessage(websocket.TextMessage, []byte("DC MADE"))
+
+	// TODO: send datachannel to a Go Channel
 }
 
 func main() {
