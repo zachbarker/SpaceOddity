@@ -4,6 +4,10 @@ import (
 	"bufio"
 	"encoding/base64"
 	"encoding/json"
+	"os"
+	"io"
+	"strings"
+	"fmt"
 )
 
 func Encode(obj interface{}) string {

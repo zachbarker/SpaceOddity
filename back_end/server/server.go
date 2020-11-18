@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
-	"github.com/pion/webrtc"
+	"github.com/pions/webrtc"
 	"log"
 	"net/http"
-	"sessionserializer"
+	"example.com/sessionserializer"
 )
 
 var upgrader = websocket.Upgrader{}
