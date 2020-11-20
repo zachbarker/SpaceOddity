@@ -17,14 +17,14 @@ const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or incre
 
 type Match struct {
 	GameTicksElapsed int
-	Players          [PLAYERS_PER_MATCH]*WebRTC.DataChanel
+	Players          [PLAYERS_PER_MATCH]*webrtc.DataChannel
 	priority         int // equivalent to number of players in above struct
 }
 
 func matchMaker() {
 
 	for {
-		dc := <-dcChan
+		// dc := <-dcChan
 
 	}
 
