@@ -35,14 +35,16 @@
 
         playerSocket.onopen = (event) => {
             playerSocket.onmessage = (msg) => {
+                console.log("whole payload: ", msg)
                 console.log("offer: ", msg['data']);
                 let offer = JSON.parse(atob(msg['data']))
                 pc.setRemoteDescription(new RTCSessionDescription(offer));
                 pc.createAnswer().then(d => {
-                    pc.setLocalDescription(d);
-                    let encodedAnswer = btoa(JSON.stringify(pc.localDescription));
-                    console.log("about to send our answer");
-                    playerSocket.send(encodedAnswer);
+                    pc.setLocalDescription(d).then(() => {
+                        let encodedAnswer = btoa(JSON.stringify(pc.localDescription));
+                        console.log("about to send our answer");
+                        playerSocket.send(encodedAnswer);
+                    })
                 });
             }
 
