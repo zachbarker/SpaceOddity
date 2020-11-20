@@ -1,12 +1,13 @@
 package main
 
 import (
-	"example.com/sessionserializer"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/pion/webrtc/v3"
 	"log"
 	"net/http"
+
+	sessionSerializer "example.com/sessionserializer"
+	"github.com/gorilla/websocket"
+	"github.com/pion/webrtc/v3"
 	// "time"
 )
 
