@@ -1,15 +1,34 @@
 package main
 
 import (
+	"example.com/sessionserializer"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"github.com/pions/webrtc"
+	"github.com/pion/webrtc/v3"
 	"log"
 	"net/http"
-	"example.com/sessionserializer"
+	// "time"
 )
 
 var upgrader = websocket.Upgrader{}
+var dcChan chan *webrtc.DataChannel
+
+const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or increase player count
+
+type Match struct {
+	GameTicksElapsed int
+	Players          [PLAYERS_PER_MATCH]*WebRTC.DataChanel
+	priority         int // equivalent to number of players in above struct
+}
+
+func matchMaker() {
+
+	for {
+		dc := <-dcChan
+
+	}
+
+}
 
 func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -53,17 +72,17 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	dataChannel.OnOpen(func() {
 		fmt.Printf("Data channel '%s'-'%d' open.\n", dataChannel.Label(), dataChannel.ID())
 
-		for range time.NewTicker(5 * time.Second).C {
-			message := "message"
-			fmt.Printf("Sending '%s'\n", message)
+		// for range time.NewTicker(5 * time.Second).C {
+		// 	message := "message"
+		// 	fmt.Printf("Sending '%s'\n", message)
 
-			// Send the message as text
-			sendErr := dataChannel.SendText(message)
-			if sendErr != nil {
-				log.Println(sendErr)
-				return
-			}
-		}
+		// 	// Send the message as text
+		// 	sendErr := dataChannel.SendText(message)
+		// 	if sendErr != nil {
+		// 		log.Println(sendErr)
+		// 		return
+		// 	}
+		// }
 	})
 
 	offer, err := peerConnection.CreateOffer(nil)
@@ -72,7 +91,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gatherComplete := peerConnection.GatheringCompletePromise(peerConnection)
+	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
 	err = peerConnection.SetLocalDescription(offer)
 	if err != nil {
@@ -81,9 +100,9 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	<-gatherComplete
-
-	encodedOffer := Encode(*peerConnection.LocalDescription())
-	err = playerSocket.WriteMessage(websocket.TextMessage, encodedOffer)
+	encodedOfferInBytes := []byte(sessionSerializer.Encode(*peerConnection.LocalDescription()))
+	fmt.Println("about to send: ", encodedOfferInBytes)
+	err = playerSocket.WriteMessage(websocket.TextMessage, encodedOfferInBytes)
 	if err != nil {
 		log.Print("ERROR", err)
 		return
@@ -95,15 +114,14 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("received answer! %s\n", answer)
-	decodedAnswer := Decode(answer)
-
+	fmt.Printf("received answer! %s\n", encodedAnswer)
+	decodedAnswer := webrtc.SessionDescription{}
+	sessionSerializer.Decode(string(encodedAnswer), &decodedAnswer)
 	err = peerConnection.SetRemoteDescription(decodedAnswer)
 	if err != nil {
-		log.Printf("error when trying to create data channel")
+		log.Println("error when trying to create data channel", err)
 		return
 	}
-	// need to create a webrtc data channel here.
 
 	err = playerSocket.WriteMessage(websocket.TextMessage, []byte("DC MADE"))
 
