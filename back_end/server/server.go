@@ -17,18 +17,18 @@ const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or incre
 
 type Match struct {
 	GameTicksElapsed int
-	Players          [PLAYERS_PER_MATCH]*WebRTC.DataChanel
+	Players          [PLAYERS_PER_MATCH]*webrtc.DataChannel
 	priority         int // equivalent to number of players in above struct
 }
 
-func matchMaker() {
+// func matchMaker() {
 
-	for {
-		dc := <-dcChan
+// 	for {
+// 		dc := <-dcChan
 
-	}
+// 	}
 
-}
+// }
 
 func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
