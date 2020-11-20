@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
-	"github.com/pions/webrtc"
+	"github.com/pion/webrtc/v3"
 	"log"
 	"net/http"
 	"example.com/sessionserializer"
