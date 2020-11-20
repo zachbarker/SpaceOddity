@@ -7,6 +7,7 @@ import (
 	"github.com/pion/webrtc/v3"
 	"log"
 	"net/http"
+	"container/heap"
 	// "time"
 )
 
@@ -15,19 +16,44 @@ var dcChan chan *webrtc.DataChannel
 
 const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or increase player count
 
+// type Player struct {
+// 	Index	int
+// 	X		int
+// 	Y		int
+// 	Width 	int
+// 	Height	int
+// }
+
 type Match struct {
-	GameTicksElapsed int
-	Players          [PLAYERS_PER_MATCH]*webrtc.DataChannel
-	priority         int // equivalent to number of players in above struct
+	GameTicksElapsed 	int
+	// Lobby          		[PLAYERS_PER_MATCH] * webrtc.DataChannel
+	Priority     		int
 }
 
-// func matchMaker() {
+type PriorityQueue [] * Match
 
-// 	for {
-// 		_ := <-dcChan
-// 	}
+func (pq PriorityQueue) Len() int { return len(pq) }
 
-// }
+func (pq PriorityQueue) Less(i, j int) bool {
+	return pq[i].Priority < pq[j].Priority
+}
+
+func (pq *PriorityQueue) Pop() interface{} {
+	old := *pq
+	item := old[len(old) - 1]
+	*pq = old[0 : (len(old) - 1)]
+	return item
+}
+
+func (pq *PriorityQueue) Push(x interface{}){
+	item := x.(*Match)
+	*pq = append(*pq, item)
+}
+
+func (pq PriorityQueue) Swap(i, j int) {
+	pq[i], pq[j] = pq[j], pq[i]
+}
+
 
 func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -128,6 +154,26 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	matchList := []*Match {
+		{GameTicksElapsed: 5, Priority: 3},
+		{GameTicksElapsed: 7, Priority: 5},
+		{GameTicksElapsed: 4, Priority: 2},
+		{GameTicksElapsed: 2, Priority: 4},
+		{GameTicksElapsed: 1, Priority: 0},
+	}
+
+	priority := make(PriorityQueue, len(matchList))
+
+	for i, item := range matchList {
+		priority[i] = item
+	}
+
+	heap.Init(&priority)
+
+	for priority.Len() > 0 {
+		item := heap.Pop(&priority).(*Match)
+		fmt.Printf("Ticks: %d Priority %d\n", item.GameTicksElapsed, item.Priority)
+	}
 	http.HandleFunc("/websocket", makeWebSocket)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
