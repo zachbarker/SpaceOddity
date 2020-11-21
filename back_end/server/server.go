@@ -11,8 +11,9 @@ import (
 	// "time"
 )
 
+var dcChan chan *webrtc.DataChannel = make(chan *webrtc.DataChannel)
+
 var upgrader = websocket.Upgrader{}
-var dcChan chan *webrtc.DataChannel
 
 const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or increase player count
 
@@ -24,34 +25,15 @@ const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or incre
 // 	Height	int
 // }
 
-type Match struct {
-	GameTicksElapsed int
-	// Lobby          		[PLAYERS_PER_MATCH] * webrtc.DataChannel
-	Priority int
-}
-
-type PriorityQueue []*Match
-
-func (pq PriorityQueue) Len() int { return len(pq) }
-
-func (pq PriorityQueue) Less(i, j int) bool {
-	return pq[i].Priority < pq[j].Priority
-}
-
-func (pq *PriorityQueue) Pop() interface{} {
-	old := *pq
-	item := old[len(old)-1]
-	*pq = old[0:(len(old) - 1)]
-	return item
-}
-
-func (pq *PriorityQueue) Push(x interface{}) {
-	item := x.(*Match)
-	*pq = append(*pq, item)
-}
-
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
+func matchMaker() {
+	fmt.Println("match maker started")
+	dc := <-dcChan
+	fmt.Println("received channel")
+	match := InitializeMatchWithPlayer(&Player{dc})
+	for {
+		dc := <-dcChan
+		match.AddPlayer(&Player{dc})
+	}
 }
 
 func makeWebSocket(w http.ResponseWriter, r *http.Request) {
@@ -93,22 +75,6 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dataChannel.OnOpen(func() {
-		fmt.Printf("Data channel '%s'-'%d' open.\n", dataChannel.Label(), dataChannel.ID())
-
-		// for range time.NewTicker(5 * time.Second).C {
-		// 	message := "message"
-		// 	fmt.Printf("Sending '%s'\n", message)
-
-		// 	// Send the message as text
-		// 	sendErr := dataChannel.SendText(message)
-		// 	if sendErr != nil {
-		// 		log.Println(sendErr)
-		// 		return
-		// 	}
-		// }
-	})
-
 	offer, err := peerConnection.CreateOffer(nil)
 	if err != nil {
 		log.Println(err)
@@ -126,6 +92,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	<-gatherComplete
 	encodedOfferInBytes := []byte(sessionSerializer.Encode(*peerConnection.LocalDescription()))
 	fmt.Println("about to send: ", encodedOfferInBytes)
+
 	err = playerSocket.WriteMessage(websocket.TextMessage, encodedOfferInBytes)
 	if err != nil {
 		log.Print("ERROR", err)
@@ -149,7 +116,13 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	err = playerSocket.WriteMessage(websocket.TextMessage, []byte("DC MADE"))
 
-	// TODO: send datachannel to a Go Channel
+	dataChannel.OnOpen(func() {
+		fmt.Printf("Data channel '%s'-'%d' open.\n", dataChannel.Label(), dataChannel.ID())
+		dataChannel.Send([]byte("Please wait, finding a match..."))
+	})
+
+	dcChan <- dataChannel
+
 }
 
 func main() {
@@ -173,6 +146,7 @@ func main() {
 		item := heap.Pop(&priority).(*Match)
 		fmt.Printf("Ticks: %d Priority %d\n", item.GameTicksElapsed, item.Priority)
 	}
+	go matchMaker()
 	http.HandleFunc("/websocket", makeWebSocket)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
