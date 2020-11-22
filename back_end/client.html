@@ -22,9 +22,10 @@
             if (event.candidate === null)
                 console.log(btoa(JSON.stringify(pc.localDescription)));
         };
-
+        
         pc.ondatachannel = e => {
             let dc = e.channel;
+            window.dc = dc;
             log('New DataChannel ' + dc.label)
             dc.onclose = () => console.log('dc has closed')
             dc.onopen = () => console.log('dc has opened')
