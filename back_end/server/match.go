@@ -27,7 +27,7 @@ const TICK_RATE = 45
 // This function will initialize a new match with a given player (including running its
 // gameloop) before returning a reference to the match.
 func InitializeMatchWithPlayer(player *Player) *Match {
-	var playerList [5]*Player
+	var playerList [PLAYERS_PER_MATCH]*Player
 	match := &Match{0, sync.Mutex{}, sync.Mutex{}, playerList, 1, make([][]int, 1), make(chan []byte)}
 	match.AddPlayer(player)
 	go match.Gameloop()
