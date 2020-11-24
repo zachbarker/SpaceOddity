@@ -12,9 +12,25 @@ type Player struct {
 }
 
 type Projectile struct {
-	Entity quadgo.Entity
+	Entity *quadgo.Entity
+	XVel   int
+	YVel   int
 }
 
 type Asteroid struct {
 	Entity quadgo.Entity
 }
+
+func (p *Projectile) MoveProjectile() {
+	p.Entity
+}
+
+// func main() {
+// 	proj := Projectile{quadgo.NewEntity(1.0, 1.0, 1.0, 1.0), 0, 0}
+// 	a := unsafe.Sizeof(proj)
+// 	b := unsafe.Sizeof(proj.Entity)
+// 	fmt.Println(a)
+// 	fmt.Println(b)
+// 	fmt.Println(unsafe.Sizeof(&proj))
+// 	fmt.Println(unsafe.Sizeof(proj))
+// }

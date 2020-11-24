@@ -11,11 +11,10 @@ import (
 // Thread safe.
 type Match struct {
 	GameTicksElapsed int
-	playerMu         sync.Mutex // investigate using a channel for mutexes instead, fukkker on reddit says
-	stateMu          sync.Mutex // for small N (go routine no.) mutex is better so i picked mutex 4 now
-	Lobby            [PLAYERS_PER_MATCH]*Player
-	Priority         int         // updates anytime a player leaves or joins a match
-	state            interface{} // temp state variable, ignore for now.
+	playerMu         sync.Mutex                 // investigate using a channel for mutexes instead, fukkker on reddit says
+	Lobby            [PLAYERS_PER_MATCH]*Player // for small N (go routine no.) mutex is better so i picked mutex 4 now
+	Priority         int                        // updates anytime a player leaves or joins a match
+	state            interface{}                // temp state variable, ignore for now.
 	stateChan        chan []byte
 }
 
@@ -28,7 +27,7 @@ const TICK_RATE = 45
 // gameloop) before returning a reference to the match.
 func InitializeMatchWithPlayer(player *Player) *Match {
 	var playerList [PLAYERS_PER_MATCH]*Player
-	match := &Match{0, sync.Mutex{}, sync.Mutex{}, playerList, 1, make([][]int, 1), make(chan []byte)}
+	match := &Match{0, sync.Mutex{}, playerList, 1, make([][]int, 1), make(chan []byte)}
 	match.AddPlayer(player)
 	go match.Gameloop()
 	return match
@@ -49,7 +48,7 @@ func (m *Match) sendStateToPlayers() {
 // This is a function that accepts messages via a Go Channel and
 // handles all relevant updates to server state. Called as a Go
 // routine inside of the GameLoop function
-func (m *Match) stateHandler() {
+func (m *Match) stateUpdater() {
 	for {
 		packet := <-m.stateChan
 		fmt.Printf("Message from Player: '%s'\n", string(packet))
@@ -60,7 +59,7 @@ func (m *Match) stateHandler() {
 // This is what sends out game state at a consistent tick rate until
 // there are no more players left.
 func (m *Match) Gameloop() {
-	go m.stateHandler()
+	go m.stateUpdater()
 	ticker := time.NewTicker(TICK_RATE * time.Millisecond)
 	defer ticker.Stop() // IMPORTANT, otherwise ticker will memory leak
 	for range ticker.C {
