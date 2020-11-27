@@ -56,6 +56,7 @@
 
         logos = this.physics.add.group();
 
+        // adds an event every 1000ms to spawn a random asteroid.
         this.time.addEvent({ delay: 1000, callback: spawnAsteroids, callbackScope: this, loop: true });
   
     }
@@ -64,6 +65,8 @@
         
     }
 
+    // utilizes three spawn functions to spawn
+    // a random sized asteroids
     function spawnAsteroids() {
 
         var temp = (Math.floor((Math.random() * 3) + 1));
@@ -81,6 +84,7 @@
         return Math.random() * (max - min) + min;
     }
 
+    // Medium asteroids
     function randomSpawnMedium(){
 
         // var tempNum = randomNum(0, 3);
@@ -176,6 +180,7 @@
     }
 
 
+    // Small asteroids
     function randomSpawnSmall(){
 
         // var tempNum = randomNum(0, 3);
@@ -270,6 +275,7 @@
     }
 
 
+    // Large Asteroids
     function randomSpawnLarge(){
 
         // var tempNum = randomNum(0, 3);
