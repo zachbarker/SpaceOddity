@@ -11,6 +11,7 @@ import (
 type State struct {
 	ProjChan  chan Projectile // this needs to be a ptr?
 	StateChan chan []Projectile
+	CollChan  chan []Projectile
 	// Match    *Match
 
 }
@@ -25,7 +26,8 @@ type Projectile struct {
 
 func (s *State) initState() {
 	s.ProjChan = make(chan Projectile, 50)
-	s.StateChan = make(chan []Projectile)
+	s.StateChan = make(chan []Projectile, 1)
+	s.CollChan = make(chan []Projectile, 1)
 
 }
 
@@ -33,6 +35,14 @@ func MakeProjectile(x int, y int, xVel float64, yVel float64, id int) Projectile
 	p := Projectile{x, y, xVel, yVel, id}
 	// fmt.Println(p)
 	return p
+}
+
+func boundsCheck(p *Projectile) bool {
+	if p.X >= 2500 || p.Y >= 2500 {
+		return true
+	}
+
+	return false
 }
 
 // This function grabs all projectiles in the channel and handles
@@ -45,9 +55,15 @@ func (s *State) Updater() {
 		projectile.Y += int(projectile.YVelocity)
 
 		// check collision here IFF no collision, send back to channel
-		projSlice = append(projSlice, projectile)
-		s.StateChan <- projSlice
+		if boundsCheck(&projectile) { // replace with collision check as well via quadtrees
+			collSlice := <-s.CollChan
+			collSlice = append(collSlice, projectile)
+			s.CollChan <- collSlice
+		} else {
+			projSlice = append(projSlice, projectile)
+		}
 
+		s.StateChan <- projSlice
 	}
 }
 
@@ -56,12 +72,18 @@ func (s *State) StateDisplayer() {
 	defer ticker.Stop() // IMPORTANT, otherwise ticker will memory leak
 	for range ticker.C {
 		projSlice := <-s.StateChan
+		collSlice := <-s.CollChan
 
 		for _, proj := range projSlice {
 			fmt.Println("in state chan", proj)
 			s.ProjChan <- proj
 		}
+
+		for _, coll := range collSlice {
+			fmt.Println("projectile out of range at ", coll.X, " x ", coll.Y)
+		}
 		s.StateChan <- make([]Projectile, 0)
+		s.CollChan <- make([]Projectile, 0)
 	}
 
 }
@@ -83,6 +105,7 @@ func main() {
 	s.ProjChan <- p2
 	s.ProjChan <- p3
 	s.StateChan <- make([]Projectile, 0)
+	s.CollChan <- make([]Projectile, 0)
 	select {}
 	// fmt.Println(reflect.TypeOf(s))
 	// ch <- p
