@@ -34,24 +34,31 @@
     var particles;
     var switchNum;
     var tempNum;
+    var asteroids
+    var num_asts = 89
+    
 
-    var timer = scene.time.addEvent({
-        delay: 500,                // ms
-        callback: callback,
-        //args: [],
-        callbackScope: thisArg,
-        repeat: 4
-    });
+    // var timer = scene.time.addEvent({
+    //     delay: 500,                // ms
+    //     callback: callback,
+    //     //args: [],
+    //     callbackScope: thisArg,
+    //     repeat: 4
+    // });
 
     function preload ()
     {
-       
-
-       
+   
+       this.load.spritesheet('asteroids', 'assets/asteroid_sprite_2.png', {
+        frameWidth: 48,
+        frameHeight: 48
+        });
+        
     }
 
     function create ()
-    {
+    {   
+  
         this.add.image(400, 300, 'sky');
 
         logos = this.physics.add.group();
@@ -87,289 +94,303 @@
     // Medium asteroids
     function randomSpawnMedium(){
 
-        // var tempNum = randomNum(0, 3);
+// var tempNum = randomNum(0, 3);
 
-        if(Math.floor((Math.random() * 4) + 1) == 1){
+if(Math.floor((Math.random() * 4) + 1) == 1){
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(randomX, 600, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(randomX, 600, 'asteroids', ind);
 
-                logo.displayWidth = 50;
-                logo.displayHeight = 50;
+        logo.displayWidth = 50;
+        logo.displayHeight = 50;
 
-                logo.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else if(Math.floor((Math.random() * 4) + 1) == 2) {
+} else if(Math.floor((Math.random() * 4) + 1) == 2) {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(0, randomY, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(0, randomY, 'asteroids', ind);
 
-                logo.displayWidth = 40;
-                logo.displayHeight = 40;
+        logo.displayWidth = 40;
+        logo.displayHeight = 40;
 
-                logo.setVelocity(randomNum(0, 100), randomNum(-100, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.setVelocity(randomNum(0, 100), randomNum(-100, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else if(Math.floor((Math.random() * 4) + 1) == 3) {
+} else if(Math.floor((Math.random() * 4) + 1) == 3) {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(randomX, 0, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(randomX, 0, 'asteroids', ind);
 
-                logo.displayWidth = 40;
-                logo.displayHeight = 40;
+        logo.displayWidth = 40;
+        logo.displayHeight = 40;
 
-                logo.setVelocity(randomNum(-100, 100), randomNum(0, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.setVelocity(randomNum(-100, 100), randomNum(0, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else {
+} else {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(800, randomY, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(800, randomY, 'asteroids', ind);
 
-                logo.displayWidth = 40;
-                logo.displayHeight = 40;
+        logo.displayWidth = 40;
+        logo.displayHeight = 40;
 
-                logo.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
-        }
+        logo.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
+}
 
-    }
+}
 
 
-    // Small asteroids
-    function randomSpawnSmall(){
+// Small asteroids
+function randomSpawnSmall(){
 
-        // var tempNum = randomNum(0, 3);
+// var tempNum = randomNum(0, 3);
 
-        if(Math.floor((Math.random() * 4) + 1) == 1){
+if(Math.floor((Math.random() * 4) + 1) == 1){
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(randomX, 600, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(randomX, 600, 'asteroids', ind);
 
-                logo.displayWidth = 20;
-                logo.displayHeight = 20;
+        logo.displayWidth = 20;
+        logo.displayHeight = 20;
 
-                logo.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else if(Math.floor((Math.random() * 4) + 1) == 2) {
+} else if(Math.floor((Math.random() * 4) + 1) == 2) {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(0, randomY, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(0, randomY, 'asteroids', ind);
 
-                logo.displayWidth = 20;
-                logo.displayHeight = 20;
-                
-                logo.setVelocity(randomNum(0, 100), randomNum(-100, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.displayWidth = 20;
+        logo.displayHeight = 20;
+        
+        logo.setVelocity(randomNum(0, 100), randomNum(-100, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else if(Math.floor((Math.random() * 4) + 1) == 3) {
+} else if(Math.floor((Math.random() * 4) + 1) == 3) {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(randomX, 0, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(randomX, 0, 'asteroids', ind);
 
-                logo.displayWidth = 20;
-                logo.displayHeight = 20;
+        logo.displayWidth = 20;
+        logo.displayHeight = 20;
 
-                logo.setVelocity(randomNum(-100, 100), randomNum(0, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.setVelocity(randomNum(-100, 100), randomNum(0, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else {
+} else {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
-                var logo = logos.create(800, randomY, 'logo');
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
+
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(800, randomY, 'asteroids', ind);
 
-                logo.displayWidth = 20;
-                logo.displayHeight = 20;
-
-                logo.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
-        }
+        logo.displayWidth = 20;
+        logo.displayHeight = 20;
 
-    }
+        logo.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
+}
+
+}
 
 
-    // Large Asteroids
-    function randomSpawnLarge(){
+// Large Asteroids
+function randomSpawnLarge(){
 
-        // var tempNum = randomNum(0, 3);
+// var tempNum = randomNum(0, 3);
 
-        if(Math.floor((Math.random() * 4) + 1) == 1){
+if(Math.floor((Math.random() * 4) + 1) == 1){
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(randomX, 600, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(randomX, 600, 'asteroids', ind);
 
-                logo.displayWidth = 60;
-                logo.displayHeight = 60;
+        logo.displayWidth = 60;
+        logo.displayHeight = 60;
 
-                logo.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else if(Math.floor((Math.random() * 4) + 1) == 2) {
+} else if(Math.floor((Math.random() * 4) + 1) == 2) {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(0, randomY, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(0, randomY, 'asteroids', ind);
 
-                logo.displayWidth = 60;
-                logo.displayHeight = 60;
-                
-                logo.setVelocity(randomNum(0, 100), randomNum(-100, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.displayWidth = 60;
+        logo.displayHeight = 60;
+        
+        logo.setVelocity(randomNum(0, 100), randomNum(-100, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else if(Math.floor((Math.random() * 4) + 1) == 3) {
+} else if(Math.floor((Math.random() * 4) + 1) == 3) {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
 
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                var logo = logos.create(randomX, 0, 'logo');
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(randomX, 0, 'asteroids', ind);
 
-                logo.displayWidth = 60;
-                logo.displayHeight = 60;
+        logo.displayWidth = 60;
+        logo.displayHeight = 60;
 
-                logo.setVelocity(randomNum(-100, 100), randomNum(0, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
+        logo.setVelocity(randomNum(-100, 100), randomNum(0, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
 
-        } else {
+} else {
 
-                particles = this.add.particles('red');
-                emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
-                randomX = randomNum(0, 800);
-                randomY = randomNum(0, 600);
-                var logo = logos.create(800, randomY, 'logo');
+        // particles = this.add.particles('red');
+        // emitter = particles.createEmitter({
+        //     speed: 100,
+        //     scale: { start: 1, end: 0 },
+        //     blendMode: 'ADD'
+        // });
+        randomX = randomNum(0, 800);
+        randomY = randomNum(0, 600);
 
-                logo.displayWidth = 60;
-                logo.displayHeight = 60;
+        var ind = Phaser.Math.Between(0,num_asts)
+        var logo = logos.create(800, randomY, 'asteroids', ind);
 
-                logo.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
-                logo.body.setAllowGravity(false);       
-                logo.setCollideWorldBounds(false);
-                emitter.startFollow(logo);
-        }
-    }
+        logo.displayWidth = 60;
+        logo.displayHeight = 60;
 
+        logo.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
+        logo.body.setAllowGravity(false);       
+        logo.setCollideWorldBounds(false);
+        emitter.startFollow(logo);
+}
+}
 
-    </script>
+
+</script>
 
 </body>
 </html>
