@@ -16,6 +16,9 @@ type State struct {
 
 }
 
+type obj interface {
+}
+
 type Projectile struct {
 	X         int
 	Y         int
