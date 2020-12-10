@@ -11,11 +11,11 @@ type Player struct {
 	DC *webrtc.DataChannel
 }
 
-type Projectile struct {
-	Entity *quadgo.Entity
-	XVel   int
-	YVel   int
-}
+// type Projectile struct {
+// 	Entity *quadgo.Entity
+// 	XVel   int
+// 	YVel   int
+// }
 
 type Asteroid struct {
 	Entity quadgo.Entity
