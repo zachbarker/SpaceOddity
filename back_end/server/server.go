@@ -1,7 +1,7 @@
 package main
 
 import (
-	"container/heap"
+	// "container/heap"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,11 +22,11 @@ func matchMaker() {
 	fmt.Println("match maker started")
 	dc := <-dcChan
 	fmt.Println("received channel")
-	match := InitializeMatchWithPlayer(&Player{dc})
+	match := InitializeMatchWithPlayer(&Player{Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
 	for {
 		// dc := <-dcChan
 		dc := <-dcChan
-		match.AddPlayer(&Player{dc})
+		match.AddPlayer(&Player{Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
 	}
 }
 
