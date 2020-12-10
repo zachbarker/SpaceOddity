@@ -75,7 +75,7 @@ function create() {
     // adds an event every 1000ms to spawn a random asteroid.
     this.time.addEvent({ delay: 1000, callback: spawnAsteroids, callbackScope: this, loop: true });
 }
-dw
+
 function shootAsteroid(bullet, asteroid) {
     let explosion = explosions.create(asteroid.x, asteroid.y, 'explosion')
     explosion.on("animationcomplete", () => explosion.destroy())
