@@ -13,6 +13,7 @@ var config = {
     scene: {
         preload: preload,
         create: create,
+        update: update,
         extend: {
             spawnAsteroids: spawnAsteroids
         }
@@ -32,10 +33,25 @@ const game = new Phaser.Game(config)
 function create() {
     //asteroids 
     asteroids = this.physics.add.group()
-
+    
     //ship and bullets
     ship = this.physics.add.sprite(0, 0, 'sprites')
     bullets = this.physics.add.group()
+    ship.body.bounce.x = .5
+    ship.body.bounce.y = .5
+    
+    //shooting physics
+    this.input.on('pointerdown', function (pointer) {
+        let angle = Phaser.Math.Angle.Between(ship.x, ship.y, pointer.x, pointer.y)
+        let h = Phaser.Math.Distance.Between(ship.x, ship.y, pointer.x, pointer.y)
+        fire(angle, h)
+    }, this)
+
+    ship.setCollideWorldBounds(true)
+    w = this.input.keyboard.addKey('W')
+    a = this.input.keyboard.addKey('A')
+    s = this.input.keyboard.addKey('S')
+    d = this.input.keyboard.addKey('D')
 
     this.anims.create({
         key: 'kaboom',
@@ -51,36 +67,29 @@ function create() {
     explosions = this.add.group({
         defaultKey: 'explosion'
     })
-    
-    this.physics.add.collider(bullets, asteroids, hit)
+
+    this.physics.add.collider(bullets, asteroids, shootAsteroid)
+    this.physics.add.collider(ship, asteroids, hitAsteroid)
     // this.physics.arcade.collide(asteroids, bullets, hit)
-    
-    //shooting physics
-    this.input.on('pointerdown', function (pointer) {
-        let angle = Phaser.Math.Angle.Between(ship.x, ship.y, pointer.x, pointer.y)
-        let h = Phaser.Math.Distance.Between(ship.x, ship.y, pointer.x, pointer.y)
-        fire(angle, h)
-    }, this)
-    
-    ship.setCollideWorldBounds(true)
-    w = this.input.keyboard.addKey('W')
-    a = this.input.keyboard.addKey('A')
-    s = this.input.keyboard.addKey('S')
-    d = this.input.keyboard.addKey('D')
+
     // adds an event every 1000ms to spawn a random asteroid.
     this.time.addEvent({ delay: 1000, callback: spawnAsteroids, callbackScope: this, loop: true });
-
 }
-
-function hit(bullet, asteroid) {
-
+dw
+function shootAsteroid(bullet, asteroid) {
     let explosion = explosions.create(asteroid.x, asteroid.y, 'explosion')
-    explosion.on("animationcomplete", ()=> explosion.destroy())
+    explosion.on("animationcomplete", () => explosion.destroy())
     explosion.play('kaboom')
     bullet.destroy()
     asteroid.destroy()
-   
-    
+}
+
+function hitAsteroid(ship, asteroid) {
+    // asteroid.body.setBounce(0.1,0.1)
+    // let explosion = explosions.create(ship.x, ship.y, 'explosion')
+    // explosion.on("animationcomplete", () => explosion.destroy())
+    // explosion.play('kaboom')
+    // // ship.destroy()
 }
 
 function preload() {
@@ -98,12 +107,8 @@ function preload() {
     this.load.image('bullet', 'assets/images/bomb.png')
 }
 
-
 function update() {
     shipMovement()
-    
-    this.physics.arcarde.collide()
-
 }
 
 function spawnAsteroids() {
@@ -123,10 +128,10 @@ function fire(angle, h) {
     b = bullets.create(ship.x, ship.y, 'bullet');
     b.setVelocityX(Math.cos(angle) * 400)
     b.setVelocityY(Math.sin(angle) * 400)
-
 }
 
 function shipMovement() {
+    console.log("moving")
 
     if (w.isDown) {
         if (a.isDown) {
