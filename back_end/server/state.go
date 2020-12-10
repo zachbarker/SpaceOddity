@@ -1,5 +1,12 @@
 package main
 
+/* This struct holds the state of every player. */
+type StateSnapshot struct {
+	players []*Player
+	projs   []*Projectile
+	astrds  []*Asteroid
+}
+
 // commented out entities projectile
 
 // import (
