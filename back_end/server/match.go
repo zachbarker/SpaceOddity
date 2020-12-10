@@ -54,6 +54,7 @@ func (m *Match) stateHandler() {
 		packet := <-m.stateChan
 		fmt.Printf("Message from Player: '%s'\n", string(packet))
 		// handle packet and how it updates game state here
+		// collision detection here.
 	}
 }
 
