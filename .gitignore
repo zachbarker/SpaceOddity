@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 /node_modules 
 package-lock.json
 package.json
 /back_end
+=======
+package.json
+package-lock.json
+node_modules/
+
+>>>>>>> Zach
