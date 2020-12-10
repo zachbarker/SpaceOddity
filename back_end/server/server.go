@@ -2,12 +2,13 @@ package main
 
 import (
 	"container/heap"
-	"example.com/sessionserializer"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/pion/webrtc/v3"
 	"log"
 	"net/http"
+
+	sessionSerializer "example.com/sessionserializer"
+	"github.com/gorilla/websocket"
+	"github.com/pion/webrtc/v3"
 	// "time"
 )
 
@@ -119,26 +120,6 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	matchList := []*Match{
-		{GameTicksElapsed: 5, Priority: 3},
-		{GameTicksElapsed: 7, Priority: 5},
-		{GameTicksElapsed: 4, Priority: 2},
-		{GameTicksElapsed: 2, Priority: 4},
-		{GameTicksElapsed: 1, Priority: 0},
-	}
-
-	priority := make(PriorityQueue, len(matchList))
-
-	for i, item := range matchList {
-		priority[i] = item
-	}
-
-	heap.Init(&priority)
-
-	for priority.Len() > 0 {
-		item := heap.Pop(&priority).(*Match)
-		fmt.Printf("Ticks: %d Priority %d\n", item.GameTicksElapsed, item.Priority)
-	}
 	go matchMaker()
 	http.HandleFunc("/websocket", makeWebSocket)
 	log.Fatal(http.ListenAndServe(":8080", nil))
