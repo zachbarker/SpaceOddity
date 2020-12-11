@@ -5,11 +5,9 @@
 <body>
     <script>
         let pc = new RTCPeerConnection({
-            iceServer: [
-                {
-                    urls: 'stun:stun.l.google.com:19302'
-                }
-            ]
+            iceServer: [{
+                urls: 'stun:stun.l.google.com:19302'
+            }]
         });
 
         let log = msg => {
@@ -22,7 +20,7 @@
             if (event.candidate === null)
                 console.log(btoa(JSON.stringify(pc.localDescription)));
         };
-        
+
         pc.ondatachannel = e => {
             let dc = e.channel;
             window.dc = dc;
@@ -44,6 +42,10 @@
                     pc.setLocalDescription(d).then(() => {
                         let encodedAnswer = btoa(JSON.stringify(pc.localDescription));
                         console.log("about to send our answer");
+                        playerSocket.onmessage = (msg) => { // must be sent through player socket bc it HAS to be reliable
+                            console.log(msg.data);
+                            window.ID = parseInt(msg.data);
+                        }
                         playerSocket.send(encodedAnswer);
                     })
                 });
@@ -53,7 +55,6 @@
                 console.log("CLOSED SOCKET NOW!! WAAA kinda cringe lmao.");
             }
         }
-    
     </script>
 
     <div id="socketState">

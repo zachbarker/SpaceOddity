@@ -1,9 +1,7 @@
 let pc = new RTCPeerConnection({
-    iceServer: [
-        {
-            urls: 'stun:stun.l.google.com:19302'
-        }
-    ]
+    iceServer: [{
+        urls: 'stun:stun.l.google.com:19302'
+    }]
 });
 
 let log = msg => {
@@ -20,7 +18,7 @@ pc.onicecandidate = event => {
 pc.ondatachannel = e => {
     let dc = e.channel;
     window.dc = dc;
-  
+
     log('New DataChannel ' + dc.label)
     dc.onclose = () => console.log('dc has closed')
     dc.onopen = () => console.log('dc has opened')
@@ -28,7 +26,7 @@ pc.ondatachannel = e => {
         log(`Message from DataChannel '${dc.label}' payload '${e.data}'`)
         current_tick = e.data
     }
-    
+
 }
 
 let playerSocket = new WebSocket('ws://localhost:8080/websocket')
@@ -43,6 +41,10 @@ playerSocket.onopen = (event) => {
             pc.setLocalDescription(d).then(() => {
                 let encodedAnswer = btoa(JSON.stringify(pc.localDescription));
                 console.log("about to send our answer");
+                playerSocket.onmessage = (msg) => { // must be sent through player socket bc it HAS to be reliable
+                    console.log(msg.data);
+                    window.ID = parseInt(msg.data);
+                }
                 playerSocket.send(encodedAnswer);
             })
         })

@@ -58,7 +58,7 @@ function create() {
     bullets = this.physics.add.group()
 
     //shooting physics
-    this.input.on('pointerdown', function (pointer) {
+    this.input.on('pointerdown', function(pointer) {
         let angle = Phaser.Math.Angle.Between(ship.x, ship.y, pointer.x, pointer.y)
         let h = Phaser.Math.Distance.Between(ship.x, ship.y, pointer.x, pointer.y)
         fire(angle, h)
@@ -71,15 +71,15 @@ function create() {
     d = this.input.keyboard.addKey('D')
 
     this.anims.create({
-        key: 'kaboom',
-        frames: this.anims.generateFrameNumbers('explosion', {
-            start: 0,
-            end: 15
-        }),
-        frameRate: 16,
-        repeat: 0
-    })
-    //explosions 
+            key: 'kaboom',
+            frames: this.anims.generateFrameNumbers('explosion', {
+                start: 0,
+                end: 15
+            }),
+            frameRate: 16,
+            repeat: 0
+        })
+        //explosions 
     explosions = this.add.group({
         defaultKey: 'explosion'
     })
@@ -90,7 +90,7 @@ function create() {
 
     this.physics.add.collider(bullets, asteroids, shootAsteroid)
     this.physics.add.collider(ship, asteroids, hitAsteroid)
-    // this.physics.arcade.collide(asteroids, bullets, hit)
+        // this.physics.arcade.collide(asteroids, bullets, hit)
 
     // adds an event every 1000ms to spawn a random asteroid.
     this.time.addEvent({ delay: 750, callback: spawnAsteroids, callbackScope: this, loop: true });
@@ -108,7 +108,7 @@ function hitAsteroid(ship, asteroid) {
     is_hit = true
     let diffX = ship.body.velocity.x - (5 * asteroid.body.velocity.x)
     let diffY = ship.body.velocity.y - (5 * asteroid.body.velocity.y)
-    // ship.setVelocity(diffX, diffy)
+        // ship.setVelocity(diffX, diffy)
     ship.setVelocityX(diffX / 2)
     ship.setVelocityY(diffY / 2)
     asteroid.setVelocityX(-diffX / 20)
@@ -122,10 +122,10 @@ function hitAsteroid(ship, asteroid) {
     explode_ship.play('kaboom')
     ship.destroy()
     asteroid.destroy()
-    // let explosion = explosions.create(ship.x, ship.y, 'explosion')
-    // explosion.on("animationcomplete", () => explosion.destroy())
-    // explosion.play('kaboom')
-    // // ship.destroy()
+        // let explosion = explosions.create(ship.x, ship.y, 'explosion')
+        // explosion.on("animationcomplete", () => explosion.destroy())
+        // explosion.play('kaboom')
+        // // ship.destroy()
 }
 
 function preload() {
@@ -138,7 +138,8 @@ function preload() {
         frameHeight: 128
     })
     this.load.spritesheet('sprites', 'assets/images/Shooter_SpriteSheet.png', {
-        frameWidth: 16, frameHeight: 16
+        frameWidth: 16,
+        frameHeight: 16
     })
     this.load.image('bullet', 'assets/images/bomb.png')
     this.load.image('background', 'assets/images/space_background.png')
@@ -418,74 +419,218 @@ function fire(angle, h) {
 function shipMovement() {
     console.log("moving")
 
+
     if (!is_hit) {
         if (w.isDown) {
             if (a.isDown) {
                 ship.angle = 315
                 ship.setVelocityY(-250)
                 ship.setVelocityX(-250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": -1,
+                        "YVelocity": -1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else if (d.isDown) {
                 ship.angle = 45
                 ship.setVelocityY(-250)
                 ship.setVelocityX(250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 1,
+                        "YVelocity": -1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else {
                 ship.angle = 0
                 ship.setVelocityY(-250)
                 ship.setVelocityX(0)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 0,
+                        "YVelocity": -1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             }
         } else if (s.isDown) {
             if (a.isDown) {
                 ship.angle = 225
                 ship.setVelocityY(250)
                 ship.setVelocityX(-250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": -1,
+                        "YVelocity": 1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else if (d.isDown) {
                 ship.angle = 135
                 ship.setVelocityY(250)
                 ship.setVelocityX(250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 1,
+                        "YVelocity": 1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else {
                 ship.angle = 180
                 ship.setVelocityY(250)
                 ship.setVelocityX(0)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 0,
+                        "YVelocity": 1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             }
         } else if (a.isDown) {
             if (w.isDown) {
                 ship.angle = 315
                 ship.setVelocityY(-250)
                 ship.setVelocityX(-250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": -1,
+                        "YVelocity": -1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else if (s.isDown) {
                 ship.angle = 225
                 ship.setVelocityY(250)
                 ship.setVelocityX(-250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 1,
+                        "YVelocity": -1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else {
                 ship.angle = 270
                 ship.setVelocityX(-250)
                 ship.setVelocityY(0)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 0,
+                        "YVelocity": -1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             }
         } else if (d.isDown) {
             if (w.isDown) {
                 ship.angle = 45
                 ship.setVelocityY(-250)
                 ship.setVelocityX(250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": -1,
+                        "YVelocity": 1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else if (s.isDown) {
                 ship.angle = 135
                 ship.setVelocityY(250)
                 ship.setVelocityX(250)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 1,
+                        "YVelocity": 1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             } else {
                 ship.angle = 90
                 ship.setVelocityX(250)
                 ship.setVelocityY(0)
+                window.dc.send(JSON.stringify({
+                    "SnapshotNum": 1,
+                    "PlayerIndex": window.ID,
+                    "Cmd": {
+                        "Type": 0,
+                        "XVelocity": 0,
+                        "YVelocity": 1,
+                        "X": 25,
+                        "Y": 25
+                    }
+                }))
             }
         } else {
 
             ship.setVelocityX(0)
             ship.setVelocityY(0)
+            window.dc.send(JSON.stringify({
+                "SnapshotNum": 1,
+                "PlayerIndex": window.ID,
+                "Cmd": {
+                    "Type": 0,
+                    "XVelocity": 0,
+                    "YVelocity": 0,
+                    "X": 25,
+                    "Y": 25
+                }
+            }))
         }
     }
 }
 
 async function stunned() {
     await sleep(500)
-    // is_hit = false
+        // is_hit = false
 
 }
 
@@ -506,4 +651,3 @@ function spawnspawn() {
         ticks.add(new_tick)
     }
 }
-
