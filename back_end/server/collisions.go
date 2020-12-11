@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/pion/webrtc/v3"
 	"math"
+
+	"github.com/pion/webrtc/v3"
 )
 
 // Vector struct, position of x, y
 type Vector struct {
-	x float64
-	y float64
+	x, y float64
 }
 
 // Circle struct, center=>center position x, y, radius=>size
