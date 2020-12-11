@@ -26,6 +26,7 @@ type Projectile struct {
 // Player struct, position, active=>alive or not,
 // slice of projectiles
 type Player struct {
+	Id          int
 	position    Circle
 	active      bool
 	projectiles []Projectile

@@ -16,6 +16,7 @@ type Match struct {
 	Priority         int                        // updates anytime a player leaves or joins a match
 	state            interface{}                // temp state variable, ignore for now.
 	stateChan        chan []byte
+	MatchSim         *Simulator
 }
 
 // tick rate in milliseconds, TICK_RATE/1000ms = tick rate in hertz e.g. 45/1000 = ~22hz tick rate
@@ -27,8 +28,9 @@ const TICK_RATE = 45
 // gameloop) before returning a reference to the match.
 func InitializeMatchWithPlayer(player *Player) *Match {
 	var playerList [PLAYERS_PER_MATCH]*Player
-	match := &Match{0, sync.Mutex{}, playerList, 1, make([][]int, 1), make(chan []byte)}
+	match := &Match{0, sync.Mutex{}, playerList, 1, make([][]int, 1), make(chan []byte), InitializeSimulator()}
 	match.AddPlayer(player)
+	go DelegatePackets(match.MatchSim, match.stateChan)
 	go match.Gameloop()
 	return match
 }
@@ -48,28 +50,28 @@ func (m *Match) sendStateToPlayers() {
 // This is a function that accepts messages via a Go Channel and
 // handles all relevant updates to server state. Called as a Go
 // routine inside of the GameLoop function
-func (m *Match) stateUpdater() {
-	for {
-		packet := <-m.stateChan
-		fmt.Printf("Message from Player: '%s'\n", string(packet))
-		// handle packet and how it updates game state here
-		// collision detection here.
-	}
-}
+// func (m *Match) stateUpdater() {
+// 	for {
+// 		packet := <-m.stateChan
+// 		fmt.Printf("Message from Player: '%s'\n", string(packet))
+// 		// handle packet and how it updates game state here
+// 		// collision detection here.
+// 	}
+// }
 
 // This is what sends out game state at a consistent tick rate until
 // there are no more players left.
 func (m *Match) Gameloop() {
-	go m.stateUpdater()
+	// go m.stateUpdater()
 	ticker := time.NewTicker(TICK_RATE * time.Millisecond)
 	defer ticker.Stop() // IMPORTANT, otherwise ticker will memory leak
 	for range ticker.C {
 		m.GameTicksElapsed++ // dont need mutex for this, should only change by this function
 		// fmt.Println("sending new state to players...")
 
-		s.simulateNewGameState()
+		// s.simulateNewGameState()
 
-		m.sendStateToPlayers() // send our state every tickrate
+		// m.sendStateToPlayers() // send our state every tickrate
 		// fmt.Println("sent.")
 
 		// to maintain efficiency, need to keep below lines run time to < TICK_RATE
@@ -91,18 +93,29 @@ func (m *Match) Gameloop() {
 // To be used by match-making code.
 func (m *Match) AddPlayer(player *Player) {
 	m.playerMu.Lock()
-	index := m.Priority - 1
-	m.Lobby[index] = player
+	// index := m.Priority - 1
+	var index int
+
+	for i, p := range m.Lobby { // find empty spot to place player
+		if p == nil {
+			index = i
+			player.Id = i
+			m.Lobby[i] = player
+			break
+		}
+	}
+
+	ID := fmt.Sprintf("%d", index)
+	player.DC.SendText(ID)
 	m.Priority++
 
-	player.DC.OnClose(func() { // closure means this works as intended, right? need to double check
+	player.DC.OnOpen(func() {
+		player.DC.SendText(ID)
+	})
+
+	player.DC.OnClose(func() {
 		m.playerMu.Lock()
 		m.Lobby[index] = nil
-		i := index
-		for i < m.Priority-1 {
-			m.Lobby[i] = m.Lobby[i+1]
-			i++
-		}
 		m.Priority--
 		m.playerMu.Unlock()
 	})
