@@ -93,18 +93,19 @@ function hitAsteroid(ship, asteroid) {
 }
 
 function preload() {
-    this.load.spritesheet('asteroids', 'assets/images/asteroid_sprite_2.png', {
+    //..//front_end/js
+    this.load.spritesheet('asteroids', '../assets/images/asteroid_sprite_2.png', {
         frameWidth: 48,
         frameHeight: 48
     })
-    this.load.spritesheet('explosion', 'assets/images/explosion.png', {
+    this.load.spritesheet('explosion', '../assets/images/explosion.png', {
         frameWidth: 128,
         frameHeight: 128
     })
-    this.load.spritesheet('sprites', 'assets/images/Shooter_SpriteSheet.png', {
+    this.load.spritesheet('sprites', '../assets/images/Shooter_SpriteSheet.png', {
         frameWidth: 16, frameHeight: 16
     })
-    this.load.image('bullet', 'assets/images/bomb.png')
+    this.load.image('bullet', '../assets/images/bomb.png')
 }
 
 function update() {
@@ -131,7 +132,7 @@ function fire(angle, h) {
 }
 
 function shipMovement() {
-    console.log("moving")
+   // console.log("moving")
 
     if (w.isDown) {
         if (a.isDown) {
