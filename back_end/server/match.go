@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/pion/webrtc/v3"
 	"sync"
 	"time"
+
+	"github.com/pion/webrtc/v3"
 )
 
 // This struct (and its associated functions) house the functionality of running a game server.
@@ -63,6 +64,8 @@ func (m *Match) sendStateToPlayers() {
 // there are no more players left.
 func (m *Match) Gameloop() {
 	// go m.stateUpdater()
+	masterGS <- &StateSnapshot{0, m.Lobby,
+		make([]*Projectile, 2), make([]*Asteroid, 2)}
 	ticker := time.NewTicker(TICK_RATE * time.Millisecond)
 	defer ticker.Stop() // IMPORTANT, otherwise ticker will memory leak
 	for range ticker.C {
