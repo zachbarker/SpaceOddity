@@ -66,6 +66,9 @@ func (m *Match) Gameloop() {
 	for range ticker.C {
 		m.GameTicksElapsed++ // dont need mutex for this, should only change by this function
 		// fmt.Println("sending new state to players...")
+
+		s.simulateNewGameState()
+
 		m.sendStateToPlayers() // send our state every tickrate
 		// fmt.Println("sent.")
 
