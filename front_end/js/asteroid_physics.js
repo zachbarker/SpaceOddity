@@ -32,7 +32,7 @@ var config = {
 const game = new Phaser.Game(config)
 
 let current_tick = "none"
-
+let is_hit = false
 
 function create() {
     //asteroids 
@@ -40,7 +40,7 @@ function create() {
     // ticks = this.physics.add.group()
     //ship and bullets
     ship = this.physics.add.sprite(0, 0, 'sprites')
-   
+
     bullets = this.physics.add.group()
 
     //shooting physics
@@ -81,6 +81,7 @@ function create() {
 
     // adds an event every 1000ms to spawn a random asteroid.
     this.time.addEvent({ delay: 1000, callback: spawnAsteroids, callbackScope: this, loop: true });
+
 }
 
 function shootAsteroid(bullet, asteroid) {
@@ -92,7 +93,15 @@ function shootAsteroid(bullet, asteroid) {
 }
 
 function hitAsteroid(ship, asteroid) {
-    // asteroid.body.setBounce(0.1,0.1)
+    is_hit = true
+    let diffX = ship.body.velocity.x - (5 * asteroid.body.velocity.x)
+    let diffY = ship.body.velocity.y - (5 * asteroid.body.velocity.y)
+    // ship.setVelocity(diffX, diffy)
+    ship.setVelocityX(diffX / 2)
+    ship.setVelocityY(diffY / 2)
+    asteroid.setVelocityX(-diffX / 20)
+    asteroid.setVelocityY(-diffY / 20)
+    stunned()
     // let explosion = explosions.create(ship.x, ship.y, 'explosion')
     // explosion.on("animationcomplete", () => explosion.destroy())
     // explosion.play('kaboom')
@@ -100,7 +109,7 @@ function hitAsteroid(ship, asteroid) {
 }
 
 function preload() {
-    this.load.spritesheet('asteroids', 'assets/images/asteroid_sprite_2.png', {
+    this.load.spritesheet('asteroids', 'assets/images/asteroid_sprite_1.png', {
         frameWidth: 48,
         frameHeight: 48
     })
@@ -140,68 +149,79 @@ function fire(angle, h) {
 }
 
 function shipMovement() {
-    console.log("moving")
 
-    if (w.isDown) {
-        if (a.isDown) {
-            ship.angle = 315
-            ship.setVelocityY(-250)
-            ship.setVelocityX(-250)
-        } else if (d.isDown) {
-            ship.angle = 45
-            ship.setVelocityY(-250)
-            ship.setVelocityX(250)
-        } else {
-            ship.angle = 0
-            ship.setVelocityY(-250)
-            ship.setVelocityX(0)
-        }
-    } else if (s.isDown) {
-        if (a.isDown) {
-            ship.angle = 225
-            ship.setVelocityY(250)
-            ship.setVelocityX(-250)
-        } else if (d.isDown) {
-            ship.angle = 135
-            ship.setVelocityY(250)
-            ship.setVelocityX(250)
-        } else {
-            ship.angle = 180
-            ship.setVelocityY(250)
-            ship.setVelocityX(0)
-        }
-    } else if (a.isDown) {
+    if (!is_hit) {
         if (w.isDown) {
-            ship.angle = 315
-            ship.setVelocityY(-250)
-            ship.setVelocityX(-250)
+            if (a.isDown) {
+                ship.angle = 315
+                ship.setVelocityY(-250)
+                ship.setVelocityX(-250)
+            } else if (d.isDown) {
+                ship.angle = 45
+                ship.setVelocityY(-250)
+                ship.setVelocityX(250)
+            } else {
+                ship.angle = 0
+                ship.setVelocityY(-250)
+                ship.setVelocityX(0)
+            }
         } else if (s.isDown) {
-            ship.angle = 225
-            ship.setVelocityY(250)
-            ship.setVelocityX(-250)
+            if (a.isDown) {
+                ship.angle = 225
+                ship.setVelocityY(250)
+                ship.setVelocityX(-250)
+            } else if (d.isDown) {
+                ship.angle = 135
+                ship.setVelocityY(250)
+                ship.setVelocityX(250)
+            } else {
+                ship.angle = 180
+                ship.setVelocityY(250)
+                ship.setVelocityX(0)
+            }
+        } else if (a.isDown) {
+            if (w.isDown) {
+                ship.angle = 315
+                ship.setVelocityY(-250)
+                ship.setVelocityX(-250)
+            } else if (s.isDown) {
+                ship.angle = 225
+                ship.setVelocityY(250)
+                ship.setVelocityX(-250)
+            } else {
+                ship.angle = 270
+                ship.setVelocityX(-250)
+                ship.setVelocityY(0)
+            }
+        } else if (d.isDown) {
+            if (w.isDown) {
+                ship.angle = 45
+                ship.setVelocityY(-250)
+                ship.setVelocityX(250)
+            } else if (s.isDown) {
+                ship.angle = 135
+                ship.setVelocityY(250)
+                ship.setVelocityX(250)
+            } else {
+                ship.angle = 90
+                ship.setVelocityX(250)
+                ship.setVelocityY(0)
+            }
         } else {
-            ship.angle = 270
-            ship.setVelocityX(-250)
+
+            ship.setVelocityX(0)
             ship.setVelocityY(0)
         }
-    } else if (d.isDown) {
-        if (w.isDown) {
-            ship.angle = 45
-            ship.setVelocityY(-250)
-            ship.setVelocityX(250)
-        } else if (s.isDown) {
-            ship.angle = 135
-            ship.setVelocityY(250)
-            ship.setVelocityX(250)
-        } else {
-            ship.angle = 90
-            ship.setVelocityX(250)
-            ship.setVelocityY(0)
-        }
-    } else {
-        ship.setVelocityX(0);
-        ship.setVelocityY(0);
     }
+}
+
+async function stunned() {
+    await sleep(500)
+    is_hit = false
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 let last_tick = 0
@@ -216,7 +236,6 @@ function spawnspawn() {
 
         new_tick.setText(current_tick)
         ticks.add(new_tick)
-    } 
-
+    }
 }
 
