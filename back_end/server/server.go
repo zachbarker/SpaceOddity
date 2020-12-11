@@ -22,11 +22,11 @@ func matchMaker() {
 	fmt.Println("match maker started")
 	dc := <-dcChan
 	fmt.Println("received channel")
-	match := InitializeMatchWithPlayer(&Player{Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
+	match := InitializeMatchWithPlayer(&Player{0, Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
 	for {
 		// dc := <-dcChan
 		dc := <-dcChan
-		match.AddPlayer(&Player{Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
+		match.AddPlayer(&Player{0, Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
 	}
 }
 
@@ -110,10 +110,10 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	err = playerSocket.WriteMessage(websocket.TextMessage, []byte("DC MADE"))
 
-	dataChannel.OnOpen(func() {
-		fmt.Printf("Data channel '%s'-'%d' open.\n", dataChannel.Label(), dataChannel.ID())
-		dataChannel.Send([]byte("Please wait, finding a match..."))
-	})
+	// dataChannel.OnOpen(func() {
+	// 	fmt.Printf("Data channel '%s'-'%d' open.\n", dataChannel.Label(), dataChannel.ID())
+	// 	dataChannel.SendText("Please wait, finding a match..."))
+	// })
 
 	dcChan <- dataChannel
 
