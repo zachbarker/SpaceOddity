@@ -37,6 +37,7 @@ const game = new Phaser.Game(config)
 let current_tick = "none"
 var asteroids
 var num_asts = 89
+var current_asteroids = []
 
 
 function create() {
@@ -49,9 +50,9 @@ function create() {
     // ticks = this.physics.add.group()
 
     //ship and bullets
-    ship = this.physics.add.sprite(0, 0, 'sprites')
-    ship.displayWidth = 40;
-    ship.displayHeight = 40;
+    ship = this.physics.add.sprite(400, 300, 'sprites')
+    ship.displayWidth = 35;
+    ship.displayHeight = 35;
     bullets = this.physics.add.group()
 
     //shooting physics
@@ -100,6 +101,7 @@ function shootAsteroid(bullet, asteroid) {
     explosion.play('kaboom')
     bullet.destroy()
     asteroid.destroy()
+    current_asteroids.pop(asteroid)
 }
 
 function hitAsteroid(ship, asteroid) {
@@ -183,6 +185,8 @@ function randomSpawnMedium() {
         asteroid.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else if (Math.floor((Math.random() * 4) + 1) == 2) {
 
@@ -198,6 +202,8 @@ function randomSpawnMedium() {
         asteroid.setVelocity(randomNum(0, 100), randomNum(-100, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else if (Math.floor((Math.random() * 4) + 1) == 3) {
 
@@ -213,6 +219,8 @@ function randomSpawnMedium() {
         asteroid.setVelocity(randomNum(-100, 100), randomNum(0, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else {
         randomX = randomNum(0, 800);
@@ -227,6 +235,8 @@ function randomSpawnMedium() {
         asteroid.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
     }
 
 }
@@ -251,6 +261,8 @@ function randomSpawnSmall() {
         asteroid.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else if (Math.floor((Math.random() * 4) + 1) == 2) {
 
@@ -266,6 +278,8 @@ function randomSpawnSmall() {
         asteroid.setVelocity(randomNum(0, 100), randomNum(-100, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else if (Math.floor((Math.random() * 4) + 1) == 3) {
 
@@ -281,6 +295,8 @@ function randomSpawnSmall() {
         asteroid.setVelocity(randomNum(-100, 100), randomNum(0, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else {
         randomX = randomNum(0, 800);
@@ -295,6 +311,8 @@ function randomSpawnSmall() {
         asteroid.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
     }
 }
 
@@ -317,6 +335,8 @@ function randomSpawnLarge() {
         asteroid.setVelocity(randomNum(-100, 100), randomNum(-100, 0));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else if (Math.floor((Math.random() * 4) + 1) == 2) {
 
@@ -332,6 +352,8 @@ function randomSpawnLarge() {
         asteroid.setVelocity(randomNum(0, 100), randomNum(-100, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else if (Math.floor((Math.random() * 4) + 1) == 3) {
 
@@ -347,6 +369,8 @@ function randomSpawnLarge() {
         asteroid.setVelocity(randomNum(-100, 100), randomNum(0, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
 
     } else {
         randomX = randomNum(0, 800);
@@ -361,6 +385,8 @@ function randomSpawnLarge() {
         asteroid.setVelocity(randomNum(-100, 0), randomNum(-100, 100));
         asteroid.body.setAllowGravity(false);
         asteroid.setCollideWorldBounds(false);
+        current_asteroids.push(asteroid)
+        console.log(current_asteroids.length)
     }
 }
 
