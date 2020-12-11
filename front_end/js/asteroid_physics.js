@@ -628,17 +628,17 @@ function movementFun() {
 
             ship.setVelocityX(0)
             ship.setVelocityY(0)
-            window.dc.send(JSON.stringify({
-                "SnapshotNum": 1,
-                "PlayerIndex": window.ID,
-                "Cmd": {
-                    "Type": 0,
-                    "XVelocity": 0,
-                    "YVelocity": 0,
-                    "X": 25,
-                    "Y": 25
-                }
-            }))
+            // window.dc.send(JSON.stringify({
+            //     "SnapshotNum": 1,
+            //     "PlayerIndex": window.ID,
+            //     "Cmd": {
+            //         "Type": 0,
+            //         "XVelocity": 0,
+            //         "YVelocity": 0,
+            //         "X": 25,
+            //         "Y": 25
+            //     }
+            // }))
         }
     }
 }

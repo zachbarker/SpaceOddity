@@ -27,11 +27,11 @@ func matchMaker() {
 	fmt.Println("match maker started")
 	playInfo := <-dcChan
 	fmt.Println("received channel")
-	match := InitializeMatchWithPlayer(&Player{0, Circle{Vector{200.0, 200.0}, 2.0}, true, make([]Projectile, 0), playInfo.DC}, playInfo.PlayerSocket)
+	match := InitializeMatchWithPlayer(&Player{0, Circle{Vector{400.0, 300.0}, 2.0}, true, make([]Projectile, 0), playInfo.DC}, playInfo.PlayerSocket)
 	for {
 		// dc := <-dcChan
 		playInfo := <-dcChan
-		match.AddPlayer(&Player{0, Circle{Vector{200.0, 200.0}, 2.0}, true, make([]Projectile, 0), playInfo.DC}, playInfo.PlayerSocket)
+		match.AddPlayer(&Player{0, Circle{Vector{400.0, 300.0}, 2.0}, true, make([]Projectile, 0), playInfo.DC}, playInfo.PlayerSocket)
 	}
 }
 
