@@ -44,6 +44,10 @@
                     pc.setLocalDescription(d).then(() => {
                         let encodedAnswer = btoa(JSON.stringify(pc.localDescription));
                         console.log("about to send our answer");
+                        playerSocket.onmessage = (msg) => { // must be sent through player socket bc it HAS to be reliable
+                            console.log(msg.data);
+                            window.ID = parseInt(msg.data);
+                        }
                         playerSocket.send(encodedAnswer);
                     })
                 });

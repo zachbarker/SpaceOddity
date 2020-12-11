@@ -12,7 +12,12 @@ import (
 	// "time"
 )
 
-var dcChan chan *webrtc.DataChannel = make(chan *webrtc.DataChannel)
+type PlayerSetup struct {
+	DC           *webrtc.DataChannel
+	PlayerSocket *websocket.Conn
+}
+
+var dcChan chan *PlayerSetup = make(chan *PlayerSetup)
 
 var upgrader = websocket.Upgrader{}
 
@@ -20,13 +25,13 @@ const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or incre
 
 func matchMaker() {
 	fmt.Println("match maker started")
-	dc := <-dcChan
+	playInfo := <-dcChan
 	fmt.Println("received channel")
-	match := InitializeMatchWithPlayer(&Player{0, Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
+	match := InitializeMatchWithPlayer(&Player{0, Circle{Vector{}, 2.0}, true, make([]Projectile, 2), playInfo.DC}, playInfo.PlayerSocket)
 	for {
 		// dc := <-dcChan
-		dc := <-dcChan
-		match.AddPlayer(&Player{0, Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
+		playInfo := <-dcChan
+		match.AddPlayer(&Player{0, Circle{Vector{}, 2.0}, true, make([]Projectile, 2), playInfo.DC}, playInfo.PlayerSocket)
 	}
 }
 
@@ -35,10 +40,11 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	playerSocket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
+		playerSocket.Close()
 		return
 	}
 
-	defer playerSocket.Close()
+	// defer playerSocket.Close()
 
 	config := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
@@ -54,6 +60,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	peerConnection, err := webrtc.NewPeerConnection(config)
 	if err != nil {
 		log.Println("Could not establish peer connection: ", err)
+		playerSocket.Close()
 		return
 	}
 
@@ -66,12 +73,14 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	dataChannel, err := peerConnection.CreateDataChannel("player-connection", &dcConfig)
 	if err != nil {
 		log.Println("Could not successfuly create a data channel: ", err)
+		playerSocket.Close()
 		return
 	}
 
 	offer, err := peerConnection.CreateOffer(nil)
 	if err != nil {
 		log.Println(err)
+		playerSocket.Close()
 		return
 	}
 
@@ -80,6 +89,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	err = peerConnection.SetLocalDescription(offer)
 	if err != nil {
 		log.Println(err)
+		playerSocket.Close()
 		return
 	}
 
@@ -90,12 +100,14 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	err = playerSocket.WriteMessage(websocket.TextMessage, encodedOfferInBytes)
 	if err != nil {
 		log.Print("ERROR", err)
+		playerSocket.Close()
 		return
 	}
 
 	_, encodedAnswer, err := playerSocket.ReadMessage()
 	if err != nil {
 		log.Print("error when trying to grab answer from client", err)
+		playerSocket.Close()
 		return
 	}
 
@@ -105,17 +117,24 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	err = peerConnection.SetRemoteDescription(decodedAnswer)
 	if err != nil {
 		log.Println("error when trying to create data channel", err)
+		playerSocket.Close()
 		return
 	}
 
-	err = playerSocket.WriteMessage(websocket.TextMessage, []byte("DC MADE"))
+	// err = playerSocket.WriteMessage(websocket.TextMessage, []byte("DC HANDSHAKE ESTABLISHED"))
+
+	// if err != nil {
+	// 	log.Println("error when trying to write to playersocket that the DC handshake has been established.")
+	// 	playerSocket.Close()
+	// 	return
+	// }
 
 	// dataChannel.OnOpen(func() {
 	// 	fmt.Printf("Data channel '%s'-'%d' open.\n", dataChannel.Label(), dataChannel.ID())
 	// 	dataChannel.SendText("Please wait, finding a match..."))
 	// })
 
-	dcChan <- dataChannel
+	dcChan <- &PlayerSetup{dataChannel, playerSocket}
 
 }
 

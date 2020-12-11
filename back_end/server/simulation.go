@@ -1,7 +1,10 @@
 package main
 
 // import "math"
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // width and height of front-end canvas in pixels
 const WIDTH = 800
@@ -20,6 +23,8 @@ const AST_SPD_PER_TICK = AST_SPD_PER_SEC / (1000 / TICK_RATE) // asteroid speed 
 const BLT_SPD_PER_SEC = 400
 const BLT_SPD_PER_TICK = BLT_SPD_PER_SEC / (1000 / TICK_RATE) // bullet speed in pixels/ticks
 
+const REQUEST_TICK_RATE = 15
+
 // the struct holding the channels responsible for each type of cmd
 type Simulator struct {
 	MoveChan      chan []*ClientPayload
@@ -29,17 +34,26 @@ type Simulator struct {
 // the function responsible for updating the movement on the
 // game state of the specific player
 func (s *Simulator) movementUpdater() {
-	move := <-s.MoveChan
-	ms := <-masterGS
-	fmt.Printf("%+v\n", ms)
-	fmt.Println("Movement occured and Players state and location updated")
-	fmt.Println(move)
-	playerIndex := move.PlayerIndex
-	location := &ms.players[playerIndex].position.center
-	location.x += float64(move.Cmd.XVelocity * PLAY_SPD_PER_TICK)
-	location.y += float64(move.Cmd.YVelocity * PLAY_SPD_PER_TICK)
-	fmt.Printf("%+v\n", &ms.players[playerIndex].position.center)
-	masterGS <- ms
+	ticker := time.NewTicker(REQUEST_TICK_RATE * time.Millisecond)
+	defer ticker.Stop() // IMPORTANT, otherwise ticker will memory leak
+	for range ticker.C {
+		moveSlice := <-s.MoveChan
+		ms := <-masterGS
+		fmt.Printf("%+v\n", ms)
+		fmt.Println("Movement occured and Players state and location updated")
+		fmt.Println(moveSlice)
+		for _, move := range moveSlice {
+			playerIndex := move.PlayerIndex
+			if &ms.players[playerIndex] != nil { // some positions in the lobby can be empty
+				location := &ms.players[playerIndex].position.center
+				location.x += float64(move.Cmd.XVelocity * PLAY_SPD_PER_TICK)
+				location.y += float64(move.Cmd.YVelocity * PLAY_SPD_PER_TICK)
+				fmt.Printf("%+v\n", &ms.players[playerIndex].position.center)
+			}
+		}
+		masterGS <- ms
+		s.MoveChan <- make([]*ClientPayload, 1)
+	}
 	// *ms.players[playerIndex].position.center.y = move.Cmd.Y
 	// grab game state and handle accordingly
 }
@@ -59,7 +73,7 @@ func InitializeSimulator() *Simulator {
 	sim := &Simulator{make(chan []*ClientPayload), make(chan []*ClientPayload)}
 	go sim.movementUpdater()
 	go sim.shootingUpdater()
-	sim.MoveChan <- make([]*ClientPayload, 1)
-	sim.ProjSpawnChan <- make([]*ClientPayload, 1)
+	sim.MoveChan <- make([]*ClientPayload, 0)
+	sim.ProjSpawnChan <- make([]*ClientPayload, 0)
 	return sim
 }

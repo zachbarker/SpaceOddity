@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/websocket"
+	"github.com/pion/webrtc/v3"
 	"sync"
 	"time"
-
-	"github.com/pion/webrtc/v3"
 )
 
 // This struct (and its associated functions) house the functionality of running a game server.
@@ -27,10 +27,10 @@ const TICK_RATE = 45
 
 // This function will initialize a new match with a given player (including running its
 // gameloop) before returning a reference to the match.
-func InitializeMatchWithPlayer(player *Player) *Match {
+func InitializeMatchWithPlayer(player *Player, webSocket *websocket.Conn) *Match {
 	var playerList [PLAYERS_PER_MATCH]*Player
 	match := &Match{0, sync.Mutex{}, playerList, 1, make([][]int, 1), make(chan []byte), InitializeSimulator()}
-	match.AddPlayer(player)
+	match.AddPlayer(player, webSocket)
 	go DelegatePackets(match.MatchSim, match.stateChan)
 	go match.Gameloop()
 	return match
@@ -95,7 +95,7 @@ func (m *Match) Gameloop() {
 
 // This is the function that adds a player struct to the match.
 // To be used by match-making code.
-func (m *Match) AddPlayer(player *Player) {
+func (m *Match) AddPlayer(player *Player, webSocket *websocket.Conn) {
 	m.playerMu.Lock()
 	// index := m.Priority - 1
 	var index int
@@ -114,7 +114,14 @@ func (m *Match) AddPlayer(player *Player) {
 	m.Priority++
 
 	player.DC.OnOpen(func() {
-		player.DC.SendText(ID)
+		err := webSocket.WriteMessage(websocket.TextMessage, []byte(ID))
+
+		if err != nil {
+			fmt.Println("error sending the user their ID, removing them from match: ", err)
+			webSocket.Close()
+		}
+
+		webSocket.Close()
 	})
 
 	player.DC.OnClose(func() {
