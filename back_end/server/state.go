@@ -7,7 +7,7 @@ type StateSnapshot struct {
 	astrds  []*Asteroid
 }
 
-var masterSnapshot *StateSnapshot = StateSnapshot{make([]*players, 2), make([]*)}
+var masterSnapshot chan *StateSnapshot = make(chan *StateSnapshot)
 
 // commented out entities projectile
 
