@@ -2,26 +2,29 @@ package main
 
 /* This struct holds the state of every player. */
 type StateSnapshot struct {
-	TickID  int
-	players [PLAYERS_PER_MATCH]*Player
-	projs   []*Projectile
-	astrds  []*Asteroid
+	TickID int
+	// Players *[PLAYERS_PER_MATCH]*Player
+	StateMatch *Match
+	Projs      []*Projectile
+	Astrds     []*Asteroid
 }
 
-var masterGS chan *StateSnapshot = make(chan *StateSnapshot, 2)
+var masterGS chan *StateSnapshot = make(chan *StateSnapshot, 1)
 
 // make sure to add it back into the channel?
 
 func CompareGS(cs *StateSnapshot) {
 	ms := <-masterGS
-	for i, s := range ms.players {
-		*ms.players[i] = PlayerCompare(s, cs.players[i])
+	ms.StateMatch.playerMu.Lock()
+	for i, s := range ms.StateMatch.Lobby {
+		*ms.StateMatch.Lobby[i] = PlayerCompare(s, cs.StateMatch.Lobby[i])
 	}
-	for i, s := range ms.projs {
-		*ms.projs[i] = ProjectileCompare(s, cs.projs[i])
+	ms.StateMatch.playerMu.Unlock()
+	for i, s := range ms.Projs {
+		*ms.Projs[i] = ProjectileCompare(s, cs.Projs[i])
 	}
-	for i, s := range ms.astrds {
-		*ms.astrds[i] = AsteroidCompare(s, cs.astrds[i])
+	for i, s := range ms.Astrds {
+		*ms.Astrds[i] = AsteroidCompare(s, cs.Astrds[i])
 	}
 	masterGS <- ms
 }
@@ -29,32 +32,32 @@ func CompareGS(cs *StateSnapshot) {
 // Gets the changes between positions between old and new objects
 func PlayerCompare(old, new *Player) Player {
 	obj := Player{}
-	obj.position = CircleCompare(old.position, new.position)
+	obj.Position = CircleCompare(old.Position, new.Position)
 	return obj
 }
 
 func ProjectileCompare(old, new *Projectile) Projectile {
 	obj := Projectile{}
-	obj.position = CircleCompare(old.position, new.position)
+	obj.Position = CircleCompare(old.Position, new.Position)
 	return obj
 }
 
 func AsteroidCompare(old, new *Asteroid) Asteroid {
 	obj := Asteroid{}
-	obj.position = CircleCompare(old.position, new.position)
+	obj.Position = CircleCompare(old.Position, new.Position)
 	return obj
 }
 
 func CircleCompare(old, new Circle) Circle {
 	circ := Circle{}
-	circ.center = VectorCompare(old.center, new.center)
+	circ.Center = VectorCompare(old.Center, new.Center)
 	return circ
 }
 
 func VectorCompare(old, new Vector) Vector {
 	vec := Vector{}
-	vec.x = new.x - old.x
-	vec.y = new.y - old.y
+	vec.X = new.X - old.X
+	vec.Y = new.Y - old.Y
 	return vec
 }
 
@@ -73,7 +76,7 @@ func VectorCompare(old, new Vector) Vector {
 // 	ProjChan  chan Projectile // this needs to be a ptr?
 // 	StateChan chan []Projectile
 // 	CollChan  chan []Projectile
-// 	// Match    *Match
+// 	// StateMatch    *StateMatch
 
 // }
 

@@ -17,7 +17,7 @@ type Match struct {
 	Priority         int                        // updates anytime a player leaves or joins a match
 	state            interface{}                // temp state variable, ignore for now.
 	stateChan        chan []byte
-	MatchSim         *Simulator
+	matchSim         *Simulator
 }
 
 // tick rate in milliseconds, TICK_RATE/1000ms = tick rate in hertz e.g. 45/1000 = ~22hz tick rate
@@ -31,7 +31,7 @@ func InitializeMatchWithPlayer(player *Player, webSocket *websocket.Conn) *Match
 	var playerList [PLAYERS_PER_MATCH]*Player
 	match := &Match{0, sync.Mutex{}, playerList, 1, make([][]int, 1), make(chan []byte), InitializeSimulator()}
 	match.AddPlayer(player, webSocket)
-	go DelegatePackets(match.MatchSim, match.stateChan)
+	go DelegatePackets(match.matchSim, match.stateChan)
 	go match.Gameloop()
 	return match
 }
@@ -64,11 +64,12 @@ func (m *Match) sendStateToPlayers() {
 // there are no more players left.
 func (m *Match) Gameloop() {
 	// go m.stateUpdater()
-	masterGS <- &StateSnapshot{0, m.Lobby,
+	masterGS <- &StateSnapshot{0, m,
 		make([]*Projectile, 2), make([]*Asteroid, 2)}
 	ticker := time.NewTicker(TICK_RATE * time.Millisecond)
 	defer ticker.Stop() // IMPORTANT, otherwise ticker will memory leak
 	for range ticker.C {
+		// fmt.Println("lobby of match: ", m.Lobby)
 		m.GameTicksElapsed++ // dont need mutex for this, should only change by this function
 		// fmt.Println("sending new state to players...")
 
@@ -119,6 +120,7 @@ func (m *Match) AddPlayer(player *Player, webSocket *websocket.Conn) {
 		if err != nil {
 			fmt.Println("error sending the user their ID, removing them from match: ", err)
 			webSocket.Close()
+			return
 		}
 
 		webSocket.Close()

@@ -37,6 +37,7 @@ func DelegatePackets(sim *Simulator, packetChan chan []byte) {
 	for {
 		packet := <-packetChan
 		payload, err := decodePacket(packet)
+		fmt.Println("packet received: ", payload)
 
 		if err != nil {
 			fmt.Println("received packet that we couldn't marshalize.")
@@ -60,8 +61,9 @@ func (m *Match) SendGameStateToPlayers() {
 	// for {
 	ms := <-masterGS
 	// state := &ms
-	data, err := json.Marshal(&ms)
-	fmt.Println("hello from data", data)
+	// fmt.Println("data before marshalizing: ", ms)
+	data, err := json.Marshal(ms)
+	fmt.Println("hello from data", string(data))
 
 	if err != nil {
 		fmt.Println(err)
@@ -72,6 +74,7 @@ func (m *Match) SendGameStateToPlayers() {
 		if player != nil {
 			player.DC.SendText(string(data))
 			// player.DC.SendText("from gamestate check")
+			// player.DC.SendText()
 		}
 	}
 	m.playerMu.Unlock()

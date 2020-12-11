@@ -42,19 +42,23 @@ func (s *Simulator) movementUpdater() {
 		fmt.Printf("%+v\n", ms)
 		fmt.Println("Movement occured and Players state and location updated")
 		fmt.Println(moveSlice)
+		ms.StateMatch.playerMu.Lock()
 		for _, move := range moveSlice {
+			fmt.Println(move)
 			playerIndex := move.PlayerIndex
-			if &ms.players[playerIndex] != nil { // some positions in the lobby can be empty
-				location := &ms.players[playerIndex].position.center
-				location.x += float64(move.Cmd.XVelocity * PLAY_SPD_PER_TICK)
-				location.y += float64(move.Cmd.YVelocity * PLAY_SPD_PER_TICK)
-				fmt.Printf("%+v\n", &ms.players[playerIndex].position.center)
+			if ms.StateMatch.Lobby[playerIndex] != nil { // some positions in the lobby can be empty
+				fmt.Println("player: ", ms.StateMatch.Lobby[playerIndex])
+				location := &ms.StateMatch.Lobby[playerIndex].Position.Center
+				location.X += float64(move.Cmd.XVelocity * PLAY_SPD_PER_TICK)
+				location.Y += float64(move.Cmd.YVelocity * PLAY_SPD_PER_TICK)
+				fmt.Printf("%+v\n", &ms.StateMatch.Lobby[playerIndex].Position.Center)
 			}
 		}
+		ms.StateMatch.playerMu.Unlock()
 		masterGS <- ms
-		s.MoveChan <- make([]*ClientPayload, 1)
+		s.MoveChan <- make([]*ClientPayload, 0)
 	}
-	// *ms.players[playerIndex].position.center.y = move.Cmd.Y
+	// *ms.Players[playerIndex].Position.Center.y = move.Cmd.Y
 	// grab game state and handle accordingly
 }
 
@@ -65,7 +69,7 @@ func (s *Simulator) shootingUpdater() {
 	fmt.Println("we figured out this was to shoot")
 	fmt.Println(shoot)
 	// grab game state, compare with the game state
-	// and "compensate" for lag by moving its position up
+	// and "compensate" for lag by moving its Position up
 	// and seeing if it would've hit anyone on the way there, too
 }
 

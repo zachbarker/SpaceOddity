@@ -1,3 +1,5 @@
+var playerList = [undefined, undefined, undefined, undefined, undefined];
+
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -44,10 +46,14 @@ var current_asteroids = []
 
 function create() {
 
+
     this.add.image(400, 300, 'background');
 
     //asteroids 
     asteroids = this.physics.add.group()
+
+    this.shipMovement = shipMovement;
+
 
     // ticks = this.physics.add.group()
 
@@ -55,7 +61,11 @@ function create() {
     ship = this.physics.add.sprite(400, 300, 'sprites')
     ship.displayWidth = 35;
     ship.displayHeight = 35;
+
+    enemyShips = this.physics.add.group()
     bullets = this.physics.add.group()
+
+    setUpConnection(this);
 
     //shooting physics
     this.input.on('pointerdown', function(pointer) {
@@ -89,11 +99,12 @@ function create() {
     tick = this.add.text(16, 16, 'tickParameter', { fontSize: '32px', fill: '#000' })
 
     this.physics.add.collider(bullets, asteroids, shootAsteroid)
-    this.physics.add.collider(ship, asteroids, hitAsteroid)
+    // this.physics.add.collider(ship, asteroids, hitAsteroid)
         // this.physics.arcade.collide(asteroids, bullets, hit)
 
     // adds an event every 1000ms to spawn a random asteroid.
     this.time.addEvent({ delay: 750, callback: spawnAsteroids, callbackScope: this, loop: true });
+    
 }
 
 function shootAsteroid(bullet, asteroid) {
@@ -143,6 +154,10 @@ function preload() {
     })
     this.load.image('bullet', 'assets/images/bomb.png')
     this.load.image('background', 'assets/images/space_background.png')
+}
+
+function IfAny1sANobodyBuddy() {
+    console.log("... you're life's not worth a looney on the streets.")
 }
 
 function update() {
@@ -416,10 +431,10 @@ function fire(angle, h) {
     spawnspawn()
 }
 
-function shipMovement() {
-    console.log("moving")
+shipMovement = () => {console.log('loading controls...')}
 
-
+function movementFun() {
+    console.log("Sending packet from index: ", window.ID);
     if (!is_hit) {
         if (w.isDown) {
             if (a.isDown) {
@@ -613,17 +628,17 @@ function shipMovement() {
 
             ship.setVelocityX(0)
             ship.setVelocityY(0)
-            window.dc.send(JSON.stringify({
-                "SnapshotNum": 1,
-                "PlayerIndex": window.ID,
-                "Cmd": {
-                    "Type": 0,
-                    "XVelocity": 0,
-                    "YVelocity": 0,
-                    "X": 25,
-                    "Y": 25
-                }
-            }))
+            // window.dc.send(JSON.stringify({
+            //     "SnapshotNum": 1,
+            //     "PlayerIndex": window.ID,
+            //     "Cmd": {
+            //         "Type": 0,
+            //         "XVelocity": 0,
+            //         "YVelocity": 0,
+            //         "X": 25,
+            //         "Y": 25
+            //     }
+            // }))
         }
     }
 }
