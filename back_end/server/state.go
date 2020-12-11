@@ -2,18 +2,58 @@ package main
 
 /* This struct holds the state of every player. */
 type StateSnapshot struct {
-	GameStateID int
-	players     []*Player
-	projs       []*Projectile
-	astrds      []*Asteroid
+	TickID  int
+	players []*Player
+	projs   []*Projectile
+	astrds  []*Asteroid
 }
 
-var clientStateSnapshots []StateSnapshot = []StateSnapshot{}
+var masterGS chan *StateSnapshot = make(chan *StateSnapshot)
 
-var masterSnapshot StateSnapshot = StateSnapshot{0, make([]*players, 2), make([]*projs, randomNum), make([]*astrds, randomNum)}
+func CompareGS(cs *StateSnapshot) {
+	ms := <-masterGS
+	for i, s := range ms.players {
+		*ms.players[i] = PlayerCompare(s, cs.players[i])
+	}
+	for i, s := range ms.projs {
+		*ms.projs[i] = ProjectileCompare(s, cs.projs[i])
+	}
+	for i, s := range ms.astrds {
+		*ms.astrds[i] = AsteroidCompare(s, cs.astrds[i])
+	}
+	masterGS <- ms
+}
 
-func CompareGS(gs StateSnapshot) StateSnapshot {
+// Gets the changes between positions between old and new objects
+func PlayerCompare(old, new *Player) Player {
+	obj := Player{}
+	obj.position = CircleCompare(old.position, new.position)
+	return obj
+}
 
+func ProjectileCompare(old, new *Projectile) Projectile {
+	obj := Projectile{}
+	obj.position = CircleCompare(old.position, new.position)
+	return obj
+}
+
+func AsteroidCompare(old, new *Asteroid) Asteroid {
+	obj := Asteroid{}
+	obj.position = CircleCompare(old.position, new.position)
+	return obj
+}
+
+func CircleCompare(old, new Circle) Circle {
+	circ := Circle{}
+	circ.center = VectorCompare(old.center, new.center)
+	return circ
+}
+
+func VectorCompare(old, new Vector) Vector {
+	vec := Vector{}
+	vec.x = new.x - old.x
+	vec.y = new.y - old.y
+	return vec
 }
 
 // commented out entities projectile
