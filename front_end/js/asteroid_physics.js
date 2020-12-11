@@ -37,8 +37,7 @@ function create() {
     //ship and bullets
     ship = this.physics.add.sprite(0, 0, 'sprites')
     bullets = this.physics.add.group()
-    ship.body.bounce.x = .5
-    ship.body.bounce.y = .5
+
     
     //shooting physics
     this.input.on('pointerdown', function (pointer) {
@@ -61,7 +60,7 @@ function create() {
         }),
         frameRate: 16,
         repeat: 0,
-        hideOnComplete: false
+        // hideOnComplete: false
     })
     //explosions 
     explosions = this.add.group({
@@ -75,7 +74,7 @@ function create() {
     // adds an event every 1000ms to spawn a random asteroid.
     this.time.addEvent({ delay: 1000, callback: spawnAsteroids, callbackScope: this, loop: true });
 }
-dw
+
 function shootAsteroid(bullet, asteroid) {
     let explosion = explosions.create(asteroid.x, asteroid.y, 'explosion')
     explosion.on("animationcomplete", () => explosion.destroy())
