@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"container/heap"
+	// "container/heap"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,17 +18,17 @@ var upgrader = websocket.Upgrader{}
 
 const PLAYERS_PER_MATCH int = 5 // change this if we ever want to lower or increase player count
 
-// func matchMaker() {
-// 	fmt.Println("match maker started")
-// 	dc := <-dcChan
-// 	fmt.Println("received channel")
-// 	match := InitializeMatchWithPlayer(&Player{dc})
-// 	for {
-// 		// dc := <-dcChan
-// 		dc := <-dcChan
-// 		match.AddPlayer(&Player{dc})
-// 	}
-// }
+func matchMaker() {
+	fmt.Println("match maker started")
+	dc := <-dcChan
+	fmt.Println("received channel")
+	match := InitializeMatchWithPlayer(&Player{Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
+	for {
+		// dc := <-dcChan
+		dc := <-dcChan
+		match.AddPlayer(&Player{Circle{Vector{}, 2.0}, true, make([]Projectile, 2), dc})
+	}
+}
 
 func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -120,7 +120,7 @@ func makeWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-//	go matchMaker()
+	go matchMaker()
 	http.HandleFunc("/websocket", makeWebSocket)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

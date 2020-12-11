@@ -1,6 +1,9 @@
 package main
 
-import "math"
+import (
+	"github.com/pion/webrtc/v3"
+	"math"
+)
 
 // Vector struct, position of x, y
 type Vector struct {
@@ -26,6 +29,7 @@ type Player struct {
 	position    Circle
 	active      bool
 	projectiles []Projectile
+	DC          *webrtc.DataChannel
 }
 
 // Asteroid struct, position, active=>alive or not
