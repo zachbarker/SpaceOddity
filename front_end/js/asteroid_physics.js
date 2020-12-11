@@ -20,6 +20,7 @@ var config = {
     }
 };
 
+
 // // var timer = scene.time.addEvent({
 //     delay: 500,                // ms
 //     callback: callback,
@@ -30,15 +31,18 @@ var config = {
 
 const game = new Phaser.Game(config)
 
+let current_tick = "none"
+
+
 function create() {
     //asteroids 
     asteroids = this.physics.add.group()
-    
+    // ticks = this.physics.add.group()
     //ship and bullets
     ship = this.physics.add.sprite(0, 0, 'sprites')
+   
     bullets = this.physics.add.group()
 
-    
     //shooting physics
     this.input.on('pointerdown', function (pointer) {
         let angle = Phaser.Math.Angle.Between(ship.x, ship.y, pointer.x, pointer.y)
@@ -66,6 +70,10 @@ function create() {
     explosions = this.add.group({
         defaultKey: 'explosion'
     })
+
+    // ticks = this.add.text(16, 16, 'tickParameter', { fontSize: '32px', fill: '#000' });
+    ticks = this.physics.add.group()
+    tick = this.add.text(16, 16, 'tickParameter', { fontSize: '32px', fill: '#000' })
 
     this.physics.add.collider(bullets, asteroids, shootAsteroid)
     this.physics.add.collider(ship, asteroids, hitAsteroid)
@@ -108,25 +116,27 @@ function preload() {
 
 function update() {
     shipMovement()
+    spawnspawn()
 }
 
 function spawnAsteroids() {
 
     let ind = Phaser.Math.Between(0, 89)
     let asteroid = asteroids.create(800, 300, 'asteroids', ind);
-
+    // asteroid.setBounce(1, 1)
     asteroid.displayWidth = 60;
     asteroid.displayHeight = 60;
 
     asteroid.setVelocity(-50, 0);
-    asteroid.body.setAllowGravity(false);
-    asteroid.setCollideWorldBounds(false);
+    asteroid.body.setAllowGravity(false)
+    asteroid.setCollideWorldBounds(false)
 }
 
 function fire(angle, h) {
-    b = bullets.create(ship.x, ship.y, 'bullet');
+    b = bullets.create(ship.x, ship.y, 'bullet')
     b.setVelocityX(Math.cos(angle) * 400)
     b.setVelocityY(Math.sin(angle) * 400)
+    spawnspawn()
 }
 
 function shipMovement() {
@@ -194,5 +204,19 @@ function shipMovement() {
     }
 }
 
+let last_tick = 0
 
+function spawnspawn() {
+    let ct_lst = current_tick.split(" ")
+    let ct = ct_lst[2]
+    if (last_tick != ct) {
+        last_tick = ct
+
+        let new_tick = tick
+
+        new_tick.setText(current_tick)
+        ticks.add(new_tick)
+    } 
+
+}
 
