@@ -55,3 +55,26 @@ func DelegatePackets(sim *Simulator, packetChan chan []byte) {
 		sim.ProjSpawnChan <- spawnProjsSlice
 	}
 }
+
+func (m *Match) SendGameStateToPlayers() {
+	// for {
+	ms := <-masterGS
+	// state := &ms
+	data, err := json.Marshal(&ms)
+	fmt.Println("hello from data", data)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	m.playerMu.Lock()
+	for _, player := range m.Lobby {
+		if player != nil {
+			player.DC.SendText(string(data))
+			// player.DC.SendText("from gamestate check")
+		}
+	}
+	m.playerMu.Unlock()
+	masterGS <- ms
+	// }
+}
