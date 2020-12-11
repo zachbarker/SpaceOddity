@@ -37,3 +37,6 @@ Temporary Items
 .vscode/
 
 server.exe
+node_modules/
+package-lock.json
+package.json

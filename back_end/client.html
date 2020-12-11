@@ -5,11 +5,9 @@
 <body>
     <script>
         let pc = new RTCPeerConnection({
-            iceServer: [
-                {
-                    urls: 'stun:stun.l.google.com:19302'
-                }
-            ]
+            iceServer: [{
+                urls: 'stun:stun.l.google.com:19302'
+            }]
         });
 
         let log = msg => {
@@ -22,7 +20,7 @@
             if (event.candidate === null)
                 console.log(btoa(JSON.stringify(pc.localDescription)));
         };
-        
+
         pc.ondatachannel = e => {
             let dc = e.channel;
             window.dc = dc;
@@ -57,7 +55,6 @@
                 console.log("CLOSED SOCKET NOW!! WAAA kinda cringe lmao.");
             }
         }
-    
     </script>
 
     <div id="socketState">
