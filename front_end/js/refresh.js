@@ -40,8 +40,7 @@ let setUpConnection = (phaserGame) => {
                     if (playerList[index]) {
                         console.log(player['Position']['Center']['X']);
                         console.log(player['Position']['Center']['Y']);
-                        playerList[index].x = player['Position']['Center']['X'];
-                        playerList[index].y = player['Position']['Center']['Y'];
+                        playerList[index].setPosition(player['Position']['Center']['X'], player['Position']['Center']['Y']);
                     } else {
                         let enemyShip = phaserGame.physics.add.sprite(player['Position']['Center']['X'], player['Position']['Center']['Y'], 'sprites')
                         enemyShip.displayWidth = 35;

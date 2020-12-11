@@ -49,8 +49,27 @@ func (s *Simulator) movementUpdater() {
 			if ms.StateMatch.Lobby[playerIndex] != nil { // some positions in the lobby can be empty
 				fmt.Println("player: ", ms.StateMatch.Lobby[playerIndex])
 				location := &ms.StateMatch.Lobby[playerIndex].Position.Center
-				location.X += float64(move.Cmd.XVelocity * PLAY_SPD_PER_TICK)
-				location.Y += float64(move.Cmd.YVelocity * PLAY_SPD_PER_TICK)
+
+				new_x := location.X + float64(move.Cmd.XVelocity*PLAY_SPD_PER_TICK)
+				new_y := location.Y + float64(move.Cmd.YVelocity*PLAY_SPD_PER_TICK)
+				if new_x >= WIDTH {
+					new_x = WIDTH - 35.0
+				}
+
+				if new_x <= 0.0 {
+					new_x = 35.0
+				}
+
+				if new_y >= HEIGHT {
+					new_y = HEIGHT - 35.0
+				}
+
+				if new_y <= 0.0 {
+					new_y = 35
+				}
+
+				location.X = new_x
+				location.Y = new_y
 				fmt.Printf("%+v\n", &ms.StateMatch.Lobby[playerIndex].Position.Center)
 			}
 		}

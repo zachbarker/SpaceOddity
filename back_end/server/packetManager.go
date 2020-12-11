@@ -63,7 +63,7 @@ func (m *Match) SendGameStateToPlayers() {
 	// state := &ms
 	// fmt.Println("data before marshalizing: ", ms)
 	data, err := json.Marshal(ms)
-	fmt.Println("hello from data", string(data))
+	// fmt.Println("hello from data", string(data))
 
 	if err != nil {
 		fmt.Println(err)
