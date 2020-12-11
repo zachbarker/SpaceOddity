@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/pion/webrtc/v3"
 	"sync"
 	"time"
+
+	"github.com/pion/webrtc/v3"
 )
 
 // This struct (and its associated functions) house the functionality of running a game server.

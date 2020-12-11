@@ -30,9 +30,17 @@ type Simulator struct {
 // game state of the specific player
 func (s *Simulator) movementUpdater() {
 	move := <-s.MoveChan
-	fmt.Println("we figured out this was to move")
+	ms := <-masterGS
+	fmt.Printf("%+v\n", ms)
+	fmt.Println("Movement occured and Players state and location updated")
 	fmt.Println(move)
-
+	playerIndex := move.PlayerIndex
+	location := &ms.players[playerIndex].position.center
+	location.x += float64(move.Cmd.XVelocity * PLAY_SPD_PER_TICK)
+	location.y += float64(move.Cmd.YVelocity * PLAY_SPD_PER_TICK)
+	fmt.Printf("%+v\n", &ms.players[playerIndex].position.center)
+	masterGS <- ms
+	// *ms.players[playerIndex].position.center.y = move.Cmd.Y
 	// grab game state and handle accordingly
 }
 
