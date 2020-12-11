@@ -2,15 +2,25 @@ package main
 
 /* This struct holds the state of every player. */
 type StateSnapshot struct {
-	players []*Player
-	projs   []*Projectile
-	astrds  []*Asteroid
+	GameStateID int
+	players     []*Player
+	projs       []*Projectile
+	astrds      []*Asteroid
 }
 
-var masterSnapshot *StateSnapshot = StateSnapshot{make([]*players, 2), make([]*)}
+var clientStateSnapshots []StateSnapshot = []StateSnapshot{}
+
+var masterSnapshot StateSnapshot = StateSnapshot{0, make([]*players, 2), make([]*projs, randomNum), make([]*astrds, randomNum)}
+
+func CompareGS(gs StateSnapshot) StateSnapshot {
+
+}
 
 // commented out entities projectile
 
+// func (s *StateSnapshot) UpdatePlayer (p Player, ) []int {
+
+// }
 // import (
 // 	"fmt"
 // 	"time"
