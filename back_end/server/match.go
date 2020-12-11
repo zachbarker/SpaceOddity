@@ -63,6 +63,8 @@ func (m *Match) sendStateToPlayers() {
 // there are no more players left.
 func (m *Match) Gameloop() {
 	// go m.stateUpdater()
+	masterGS <- &StateSnapshot{0, m.Lobby,
+		make([]*Projectile, 2), make([]*Asteroid, 2)}
 	ticker := time.NewTicker(TICK_RATE * time.Millisecond)
 	defer ticker.Stop() // IMPORTANT, otherwise ticker will memory leak
 	for range ticker.C {
@@ -71,6 +73,7 @@ func (m *Match) Gameloop() {
 
 		// s.simulateNewGameState()
 
+		m.SendGameStateToPlayers()
 		// m.sendStateToPlayers() // send our state every tickrate
 		// fmt.Println("sent.")
 

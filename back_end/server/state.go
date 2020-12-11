@@ -3,12 +3,14 @@ package main
 /* This struct holds the state of every player. */
 type StateSnapshot struct {
 	TickID  int
-	players []*Player
+	players [PLAYERS_PER_MATCH]*Player
 	projs   []*Projectile
 	astrds  []*Asteroid
 }
 
 var masterGS chan *StateSnapshot = make(chan *StateSnapshot)
+
+// make sure to add it back into the channel?
 
 func CompareGS(cs *StateSnapshot) {
 	ms := <-masterGS
