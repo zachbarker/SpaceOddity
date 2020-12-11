@@ -8,7 +8,7 @@ type StateSnapshot struct {
 	astrds  []*Asteroid
 }
 
-var masterGS chan *StateSnapshot = make(chan *StateSnapshot)
+var masterGS chan *StateSnapshot = make(chan *StateSnapshot, 2)
 
 // make sure to add it back into the channel?
 
