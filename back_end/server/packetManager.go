@@ -44,10 +44,14 @@ func DelegatePackets(sim *Simulator, packetChan chan []byte) {
 		}
 
 		if payload.Cmd.Type == 0 { // player is going to move
-			sim.MoveChan <- payload
+			movesSlice := <-sim.MoveChan
+			movesSlice = append(movesSlice, payload)
+			sim.MoveChan <- movesSlice
 			continue
 		}
 
-		sim.ProjSpawnChan <- payload
+		spawnProjsSlice := <-sim.ProjSpawnChan
+		spawnProjsSlice = append(spawnProjsSlice, payload)
+		sim.ProjSpawnChan <- spawnProjsSlice
 	}
 }

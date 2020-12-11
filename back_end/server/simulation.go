@@ -22,8 +22,8 @@ const BLT_SPD_PER_TICK = BLT_SPD_PER_SEC / (1000 / TICK_RATE) // bullet speed in
 
 // the struct holding the channels responsible for each type of cmd
 type Simulator struct {
-	MoveChan      chan *ClientPayload
-	ProjSpawnChan chan *ClientPayload
+	MoveChan      chan []*ClientPayload
+	ProjSpawnChan chan []*ClientPayload
 }
 
 // the function responsible for updating the movement on the
@@ -48,8 +48,10 @@ func (s *Simulator) shootingUpdater() {
 }
 
 func InitializeSimulator() *Simulator {
-	sim := &Simulator{make(chan *ClientPayload), make(chan *ClientPayload)}
+	sim := &Simulator{make(chan []*ClientPayload), make(chan []*ClientPayload)}
 	go sim.movementUpdater()
 	go sim.shootingUpdater()
+	sim.MoveChan <- make([]*ClientPayload, 1)
+	sim.ProjSpawnChan <- make([]*ClientPayload, 1)
 	return sim
 }
